@@ -2,21 +2,28 @@ import sys
 from datetime import datetime, timezone
 from uuid import uuid4
 
+from app.agents.critic import CriticAgent
 from app.agents.evidence import EvidenceAgent
 from app.agents.planner import Planner
 from app.agents.researcher import Researcher
 from app.core.gemini_llm import GeminiProvider
+from app.core.research_loop import ResearchLoop
 from app.core.run_store import RunStore
 from app.core.source_ingestor import SourceIngestor
 from app.core.source_manager import SourceManager
+from app.core.source_ranker import SourceRanker
 from app.core.tavily_search import TavilySearchProvider
 from app.models.schemas import ResearchRequest, ResearchRun
-from app.core.source_ranker import SourceRanker
+from app.agents.report import ReportAgent
+from app.core.report_renderer import ReportRenderer
+from app.core.report_store import ReportStore
+
 
 def run_research(topic: str) -> None:
-    # ---------------------------------------------------------
-    # 1. Create research request
-    # ---------------------------------------------------------
+
+    # =========================================================
+    # 1. Research Request
+    # =========================================================
 
     request = ResearchRequest(
         topic=topic,
@@ -27,209 +34,286 @@ def run_research(topic: str) -> None:
     print("AXIOM — AUTONOMOUS RESEARCH SYSTEM")
     print("=" * 70)
 
-    print("\n[1/5] Creating research plan...")
+    print(f"\nResearch question:")
+    print(f"  {request.topic}")
 
-    # ---------------------------------------------------------
-    # 2. Create research plan
-    # ---------------------------------------------------------
+    # =========================================================
+    # 2. Planner
+    # =========================================================
+
+    print("\n[1/3] Creating research plan...")
 
     planner = Planner()
+
     plan = planner.create_plan(request)
 
-    print(f"\nResearch question:")
-    print(f"  {plan.question}")
-
     print(f"\nObjectives: {len(plan.objectives)}")
+
     for objective in plan.objectives:
         print(f"  - {objective}")
 
     print(f"\nSub-questions: {len(plan.sub_questions)}")
+
     for question in plan.sub_questions:
         print(f"  - {question}")
 
-    print(f"\nSearch queries: {len(plan.search_queries)}")
+    print(f"\nInitial search queries:")
+
     for query in plan.search_queries:
         print(f"  - {query}")
 
-    # ---------------------------------------------------------
-    # 3. Research
-    # ---------------------------------------------------------
+    # =========================================================
+    # 3. Build Agents + Services
+    # =========================================================
 
-    print("\n[2/5] Searching for sources...")
+    print("\n[2/3] Starting autonomous research loop...")
+
+    search_provider = TavilySearchProvider()
+
+    source_ingestor = SourceIngestor()
+
+    source_manager = SourceManager()
 
     researcher = Researcher(
-        TavilySearchProvider(),
-        SourceIngestor(),
-        SourceManager(),
+        search_provider,
+        source_ingestor,
+        source_manager,
     )
 
-    sources = researcher.search(plan)
-
-    ranker = SourceRanker()
-
-    sources = ranker.rank(
-        sources,
-        request.topic,
-    )
-
-    sources = ranker.select(
-        sources,
-        top_k=3,
-    )
-    print("\nRanked sources:")
-
-    for source in sources:
-        print(
-            f"  {source.relevance_score:.2f} "
-            f"| {source.title}"
-        )
-
-    if not sources:
-        print("\nNo usable sources found.")
-        print("Research run terminated.")
-        return
-
-    # ---------------------------------------------------------
-    # 4. Evidence extraction
-    # ---------------------------------------------------------
-
-    print("\n[3/5] Extracting evidence...")
+    source_ranker = SourceRanker()
 
     llm = GeminiProvider()
-    evidence_agent = EvidenceAgent(llm)
 
-    analyses = []
+    evidence_agent = EvidenceAgent(
+        llm
+    )
 
-    for index, source in enumerate(sources, start=1):
+    critic = CriticAgent(
+        llm
+    )
 
-        print(
-            f"\nAnalyzing source "
-            f"{index}/{len(sources)}: {source.title}"
-        )
+    research_loop = ResearchLoop(
+        planner=planner,
+        researcher=researcher,
+        evidence_agent=evidence_agent,
+        critic=critic,
+        source_ranker=source_ranker,
+        max_iterations=3,
+    )
 
-        try:
-            analysis = evidence_agent.analyze(source)
+    # =========================================================
+    # 4. Execute Autonomous Research
+    # =========================================================
 
-            analyses.append(
-                {
-                    "source": source,
-                    "analysis": analysis,
-                }
-            )
+    result = research_loop.run(
+        plan
+    )
+    print("\nGenerating final research report...")
 
-            print(
-                f"  Claims extracted: "
-                f"{len(analysis.claims)}"
-            )
+    report_agent = ReportAgent(llm)
 
-            print(
-                f"  Evidence extracted: "
-                f"{len(analysis.evidence)}"
-            )
+    report = report_agent.generate(
+        result.plan,
+        result.sources,
+        result.analyses,
+        result.critique,
+    )
 
-        except Exception as error:
-            print(f"  Failed to analyze source: {error}")
+    renderer = ReportRenderer()
 
-    # ---------------------------------------------------------
-    # 5. Display findings
-    # ---------------------------------------------------------
+    markdown_report = renderer.render(
+        report
+    )
 
-    print("\n[4/5] Research findings")
+    # =========================================================
+    # 5. Display Final Results
+    # =========================================================
 
     print("\n" + "=" * 70)
+    print("FINAL RESEARCH RESULTS")
+    print("=" * 70)
+
+    print(
+        f"\nIterations completed:"
+        f" {result.iterations}"
+    )
+
+    print(
+        f"\nSources collected:"
+        f" {len(result.sources)}"
+    )
+
+    print(
+        f"\nEvidence analyses:"
+        f" {len(result.analyses)}"
+    )
+
+    # ---------------------------------------------------------
+    # Claims
+    # ---------------------------------------------------------
 
     total_claims = 0
     total_evidence = 0
 
-    for item in analyses:
+    print("\n" + "-" * 70)
+    print("CLAIMS")
+    print("-" * 70)
 
-        source = item["source"]
-        analysis = item["analysis"]
+    for analysis in result.analyses:
 
-        total_claims += len(analysis.claims)
-        total_evidence += len(analysis.evidence)
+        total_claims += len(
+            analysis.claims
+        )
 
-        print("\n" + "=" * 70)
-        print(source.title)
-        print(str(source.url))
-        print("=" * 70)
-
-        if not analysis.claims:
-            print("\nNo claims extracted.")
-            continue
+        total_evidence += len(
+            analysis.evidence
+        )
 
         for claim in analysis.claims:
 
-            print(f"\nClaim:")
-            print(f"  {claim.statement}")
+            print(
+                f"\n• {claim.statement}"
+            )
 
             print(
-                f"Confidence: "
+                f"  Confidence: "
                 f"{claim.confidence:.2f}"
             )
 
-            related_evidence = [
-                evidence
-                for evidence in analysis.evidence
-                if evidence.claim_id == claim.id
-            ]
-
-            for evidence in related_evidence:
-
-                print("\nEvidence:")
-                print(f"  {evidence.content}")
-
-                print(
-                    f"Strength: "
-                    f"{evidence.strength}"
-                )
-
     # ---------------------------------------------------------
-    # 6. Create research run
+    # Critique
     # ---------------------------------------------------------
+
+    print("\n" + "-" * 70)
+    print("CRITIQUE")
+    print("-" * 70)
+
+    critique = result.critique
+
+    print(
+        f"\nSufficient:"
+        f" {critique.sufficient}"
+    )
+
+    print(
+        f"Overall confidence:"
+        f" {critique.overall_confidence:.2f}"
+    )
+
+    if critique.strengths:
+
+        print("\nStrengths:")
+
+        for strength in critique.strengths:
+            print(f"  - {strength}")
+
+    if critique.weaknesses:
+
+        print("\nWeaknesses:")
+
+        for weakness in critique.weaknesses:
+            print(f"  - {weakness}")
+
+    if critique.missing_information:
+
+        print("\nMissing information:")
+
+        for item in critique.missing_information:
+            print(f"  - {item}")
+
+    if critique.follow_up_questions:
+
+        print("\nFollow-up questions:")
+
+        for question in critique.follow_up_questions:
+            print(f"  - {question}")
+
+    # =========================================================
+    # 6. Persist Research Run
+    # =========================================================
+
+    print("\n[3/3] Saving research run...")
 
     research_run = ResearchRun(
         id=f"run_{uuid4().hex[:12]}",
         question=request.topic,
-        created_at=datetime.now(timezone.utc),
-        plan=plan,
-        sources=sources,
-        analyses=[
-            item["analysis"]
-            for item in analyses
-        ],
+        created_at=datetime.now(
+            timezone.utc
+        ),
+        plan=result.plan,
+        sources=result.sources,
+        analyses=result.analyses,
     )
-
-    # ---------------------------------------------------------
-    # 7. Persist research run
-    # ---------------------------------------------------------
 
     store = RunStore()
 
-    run_file = store.save(research_run)
+    run_file = store.save(
+        research_run
+    )
 
-    # ---------------------------------------------------------
-    # 8. Final summary
-    # ---------------------------------------------------------
+    # =========================================================
+    # 7. Save Research Report
+    # =========================================================
+
+    report_store = ReportStore()
+
+    report_file = report_store.save(
+        research_run.id,
+        markdown_report,
+    )
+
+    print(
+        f"\nReport saved to:"
+        f"\n  {report_file}"
+    )
+
+    # =========================================================
+    # 8. Summary
+    # =========================================================
 
     print("\n" + "=" * 70)
-    print("[5/5] RESEARCH RUN COMPLETE")
+    print("AXIOM RUN COMPLETE")
     print("=" * 70)
 
-    print(f"\nResearch Run ID:")
-    print(f"  {research_run.id}")
+    print(
+        f"\nRun ID:"
+        f"\n  {research_run.id}"
+    )
 
-    print(f"\nSources:")
-    print(f"  {len(sources)}")
+    print(
+        f"\nIterations:"
+        f"\n  {result.iterations}"
+    )
 
-    print(f"\nClaims:")
-    print(f"  {total_claims}")
+    print(
+        f"\nSources:"
+        f"\n  {len(result.sources)}"
+    )
 
-    print(f"\nEvidence:")
-    print(f"  {total_evidence}")
+    print(
+        f"\nClaims:"
+        f"\n  {total_claims}"
+    )
 
-    print(f"\nSaved to:")
-    print(f"  {run_file}")
+    print(
+        f"\nEvidence items:"
+        f"\n  {total_evidence}"
+    )
+
+    print(
+        f"\nResearch sufficient:"
+        f"\n  {critique.sufficient}"
+    )
+
+    print(
+        f"\nConfidence:"
+        f"\n  {critique.overall_confidence:.2f}"
+    )
+
+    print(
+        f"\nSaved to:"
+        f"\n  {run_file}"
+    )
 
     print("\n" + "=" * 70)
 
@@ -237,12 +321,16 @@ def run_research(topic: str) -> None:
 if __name__ == "__main__":
 
     if len(sys.argv) < 2:
+
         print(
             'Usage: python -m app.run '
             '"your research question"'
         )
+
         sys.exit(1)
 
-    topic = " ".join(sys.argv[1:])
+    topic = " ".join(
+        sys.argv[1:]
+    )
 
     run_research(topic)

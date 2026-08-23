@@ -4,6 +4,7 @@ from google import genai
 from google.genai import types
 
 from app.core.llm import LLMProvider
+from app.core.retry import retry
 
 
 class GeminiProvider(LLMProvider):
@@ -24,12 +25,16 @@ class GeminiProvider(LLMProvider):
         )
 
     def generate(self, prompt: str) -> str:
-        response = self.client.models.generate_content(
-            model=self.model,
-            contents=prompt,
-        )
 
-        return response.text
+        def request():
+            response = self.client.models.generate_content(
+                model=self.model,
+                contents=prompt,
+            )
+
+            return response.text
+
+        return retry(request)
 
     def generate_json(
         self,
@@ -37,13 +42,17 @@ class GeminiProvider(LLMProvider):
         schema: dict,
     ) -> dict:
 
-        response = self.client.models.generate_content(
-            model=self.model,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema=schema,
-            ),
-        )
+        def request():
 
-        return response.parsed
+            response = self.client.models.generate_content(
+                model=self.model,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=schema,
+                ),
+            )
+
+            return response.parsed
+
+        return retry(request)

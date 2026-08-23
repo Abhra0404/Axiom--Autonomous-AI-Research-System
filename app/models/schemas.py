@@ -75,3 +75,30 @@ class ResearchRun(BaseModel):
     plan: ResearchPlan
     sources: list[Source]
     analyses: list[EvidenceAnalysis]
+
+class Critique(BaseModel):
+    sufficient: bool
+    overall_confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+    )
+    strengths: list[str]
+    weaknesses: list[str]
+    missing_information: list[str]
+    follow_up_questions: list[str]
+
+class ReportSection(BaseModel):
+    title: str
+    content: str
+
+
+class ResearchReport(BaseModel):
+    title: str
+    executive_summary: str
+    research_question: str
+    methodology: str
+    key_findings: list[str]
+    evidence_analysis: list[str]
+    limitations: list[str]
+    conclusion: str
+    sources: list[str]
