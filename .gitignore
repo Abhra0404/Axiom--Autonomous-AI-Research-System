@@ -1,0 +1,92 @@
+# ==============================
+# Python
+# ==============================
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# ==============================
+# Environment & Secrets
+# ==============================
+
+.env
+.env.*
+!.env.example
+
+# ==============================
+# Testing / Coverage
+# ==============================
+
+.pytest_cache/
+.coverage
+htmlcov/
+.coverage.*
+*.cover
+
+# ==============================
+# Type Checking / Linters
+# ==============================
+
+.mypy_cache/
+.pyright/
+.ruff_cache/
+
+# ==============================
+# Build / Packaging
+# ==============================
+
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ==============================
+# Axiom Generated Artifacts
+# ==============================
+
+research_runs/
+experiments/
+reports/generated/
+
+# ==============================
+# Logs
+# ==============================
+
+*.log
+logs/
+
+# ==============================
+# IDE / Editor
+# ==============================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==============================
+# macOS
+# ==============================
+
+.DS_Store
+
+# ==============================
+# Jupyter
+# ==============================
+
+.ipynb_checkpoints/
+
+# ==============================
+# Temporary Files
+# ==============================
+
+*.tmp
+*.temp
+.cache/
