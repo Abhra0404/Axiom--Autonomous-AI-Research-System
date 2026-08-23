@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from app.core.ollama_llm import OllamaProvider
+from app.core.llm import LLMProvider
 from app.models.schemas import (
     Claim,
     Evidence,
@@ -11,7 +11,7 @@ from app.models.schemas import (
 
 class EvidenceAgent:
 
-    def __init__(self, llm: OllamaProvider):
+    def __init__(self, llm: LLMProvider):
         self.llm = llm
 
     def analyze(self, source: Source) -> EvidenceAnalysis:
@@ -76,7 +76,10 @@ Return ONLY valid JSON in this format:
 }}
 """
 
-        data = self.llm.generate_json(prompt)
+        data = self.llm.generate_json(
+            prompt,
+            EvidenceAnalysis.model_json_schema(),
+        )
 
         # Validate and normalize IDs
         claims = []

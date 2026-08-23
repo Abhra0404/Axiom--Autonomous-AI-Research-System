@@ -25,7 +25,7 @@ class TavilySearchProvider(SearchProvider):
         response = self.client.search(
             query=query,
             search_depth="advanced",
-            max_results=5,
+            max_results=2,
         )
 
         sources = []

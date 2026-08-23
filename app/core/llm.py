@@ -6,3 +6,11 @@ class LLMProvider(ABC):
     @abstractmethod
     def generate(self, prompt: str) -> str:
         pass
+
+    @abstractmethod
+    def generate_json(
+        self,
+        prompt: str,
+        schema: dict,
+    ) -> dict:
+        pass

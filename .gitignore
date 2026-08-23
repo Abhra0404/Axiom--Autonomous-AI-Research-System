@@ -90,3 +90,6 @@ logs/
 *.tmp
 *.temp
 .cache/
+
+research/*
+!research/.gitkeep

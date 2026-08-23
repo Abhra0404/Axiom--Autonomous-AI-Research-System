@@ -34,6 +34,11 @@ class Source(BaseModel):
     content: str | None = None
     retrieved_at: datetime | None = None
     search_query: str | None = None
+    relevance_score: float = Field(
+        default=0.0,
+        ge=0.0,
+        le=1.0,
+)
 
 
 class Claim(BaseModel):
@@ -62,3 +67,11 @@ class ResearchReport(BaseModel):
     limitations: list[str]
     conclusion: str
     sources: list[Source]
+
+class ResearchRun(BaseModel):
+    id: str
+    question: str
+    created_at: datetime
+    plan: ResearchPlan
+    sources: list[Source]
+    analyses: list[EvidenceAnalysis]
