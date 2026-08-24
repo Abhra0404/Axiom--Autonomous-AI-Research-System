@@ -17,6 +17,9 @@ from app.models.schemas import ResearchRequest, ResearchRun
 from app.agents.report import ReportAgent
 from app.core.report_renderer import ReportRenderer
 from app.core.report_store import ReportStore
+from app.core.source_cache import SourceCache
+from app.core.evidence_cache import EvidenceCache
+
 
 
 def run_research(topic: str) -> None:
@@ -70,7 +73,11 @@ def run_research(topic: str) -> None:
 
     search_provider = TavilySearchProvider()
 
-    source_ingestor = SourceIngestor()
+    source_cache = SourceCache()
+
+    source_ingestor = SourceIngestor(
+        cache=source_cache
+    )
 
     source_manager = SourceManager()
 
@@ -84,8 +91,11 @@ def run_research(topic: str) -> None:
 
     llm = GeminiProvider()
 
+    evidence_cache = EvidenceCache()
+
     evidence_agent = EvidenceAgent(
-        llm
+        llm,
+        cache=evidence_cache,
     )
 
     critic = CriticAgent(

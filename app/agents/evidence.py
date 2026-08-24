@@ -1,5 +1,6 @@
 from uuid import uuid4
 
+from app.core.evidence_cache import EvidenceCache
 from app.core.llm import LLMProvider
 from app.models.schemas import (
     Claim,
@@ -11,8 +12,14 @@ from app.models.schemas import (
 
 class EvidenceAgent:
 
-    def __init__(self, llm: LLMProvider):
+    def __init__(
+        self,
+        llm: LLMProvider,
+        cache: EvidenceCache | None = None,
+    ):
         self.llm = llm
+        self.cache = cache or EvidenceCache()
+
 
     def analyze(self, source: Source) -> EvidenceAnalysis:
 
@@ -21,6 +28,13 @@ class EvidenceAgent:
                 claims=[],
                 evidence=[],
             )
+
+        cached = self.cache.get(
+            source.content
+        )
+
+        if cached is not None:
+            return cached
 
         prompt = f"""
 You are an evidence extraction agent for a research system.
@@ -107,7 +121,13 @@ Return ONLY valid JSON in this format:
                 )
             )
 
-        return EvidenceAnalysis(
+        result = EvidenceAnalysis(
             claims=claims,
             evidence=evidence,
         )
+        self.cache.set(
+            source.content,
+            result,
+        )
+
+        return result
