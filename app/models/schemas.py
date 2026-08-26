@@ -45,7 +45,13 @@ class Claim(BaseModel):
     id: str
     statement: str
     source_id: str
-    confidence: float = Field(ge=0.0, le=1.0)
+    confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+    )
+    evidence_ids: list[str] = Field(
+        default_factory=list,
+    )
 
 
 class Evidence(BaseModel):
@@ -53,7 +59,12 @@ class Evidence(BaseModel):
     claim_id: str
     source_id: str
     content: str
-    strength: Literal["weak", "moderate", "strong"]
+    strength: Literal[
+        "weak",
+        "moderate",
+        "strong",
+    ]
+    location: str | None = None
 
 class EvidenceAnalysis(BaseModel):
     claims: list[Claim]
@@ -61,12 +72,15 @@ class EvidenceAnalysis(BaseModel):
 
 
 class ResearchReport(BaseModel):
-    question: str
-    summary: str
-    findings: list[str]
+    title: str
+    executive_summary: str
+    research_question: str
+    methodology: str
+    key_findings: list[str]
+    evidence_analysis: list[str]
     limitations: list[str]
     conclusion: str
-    sources: list[Source]
+    sources: list[str]
 
 class ResearchRun(BaseModel):
     id: str
@@ -91,14 +105,20 @@ class ReportSection(BaseModel):
     title: str
     content: str
 
+class ReportFinding(BaseModel):
+    statement: str
+    claim_ids: list[str] = Field(
+        default_factory=list,
+    )
 
 class ResearchReport(BaseModel):
     title: str
     executive_summary: str
     research_question: str
     methodology: str
-    key_findings: list[str]
+    key_findings: list[ReportFinding]
     evidence_analysis: list[str]
     limitations: list[str]
     conclusion: str
     sources: list[str]
+

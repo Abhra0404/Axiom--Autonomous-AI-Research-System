@@ -80,7 +80,25 @@ Return structured data matching the provided schema.
             prompt,
             ResearchReport.model_json_schema(),
         )
+        valid_claim_ids = {
+            claim.id
+            for analysis in analyses
+            for claim in analysis.claims
+        }
 
+        for finding in data.get(
+            "key_findings",
+            [],
+        ):
+
+            finding["claim_ids"] = [
+                claim_id
+                for claim_id in finding.get(
+                    "claim_ids",
+                    [],
+                )
+                if claim_id in valid_claim_ids
+            ]
         return ResearchReport.model_validate(data)
 
     @staticmethod

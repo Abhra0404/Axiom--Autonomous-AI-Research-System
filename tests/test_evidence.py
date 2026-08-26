@@ -62,6 +62,9 @@ def test_evidence_agent_uses_cache(tmp_path):
                 "statement": "RAG can reduce hallucinations.",
                 "source_id": "source-1",
                 "confidence": 0.9,
+                "evidence_ids": [
+                    "evidence-1"
+                ],
             }
         ],
         "evidence": [
@@ -71,6 +74,7 @@ def test_evidence_agent_uses_cache(tmp_path):
                 "source_id": "source-1",
                 "content": "The study reported fewer hallucinations.",
                 "strength": "strong",
+                "location": "paragraph 4",
             }
         ],
     }

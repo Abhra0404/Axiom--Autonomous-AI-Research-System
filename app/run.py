@@ -131,8 +131,23 @@ def run_research(topic: str) -> None:
 
     renderer = ReportRenderer()
 
+    all_claims = [
+    claim
+    for analysis in result.analyses
+    for claim in analysis.claims
+    ]
+
+    all_evidence = [
+        item
+        for analysis in result.analyses
+        for item in analysis.evidence
+    ]
+
     markdown_report = renderer.render(
-        report
+        report,
+        sources=result.sources,
+        claims=all_claims,
+        evidence=all_evidence,
     )
 
     # =========================================================
