@@ -1,17 +1,19 @@
 import re
 
+from app.core.source_quality import SourceQualityScorer
 from app.models.schemas import Source
 
 
 class SourceRanker:
 
-    def select(
+    def __init__(
         self,
-        sources: list[Source],
-        top_k: int = 3,
-    ) -> list[Source]:
-
-        return sources[:top_k]
+        quality_scorer: SourceQualityScorer | None = None,
+    ):
+        self.quality_scorer = (
+            quality_scorer
+            or SourceQualityScorer()
+        )
 
     def rank(
         self,
@@ -25,34 +27,60 @@ class SourceRanker:
 
         for source in sources:
 
-            text = " ".join(
-                [
-                    source.title,
-                    source.content or "",
-                ]
-            ).lower()
-
-            score = self._calculate_score(
-                text,
+            relevance_score = self._calculate_score(
+                " ".join(
+                    [
+                        source.title,
+                        source.content or "",
+                    ]
+                ).lower(),
                 query_terms,
             )
 
+            source = source.model_copy(
+                update={
+                    "relevance_score": relevance_score,
+                }
+            )
+
+            source = self.quality_scorer.apply(
+                source
+            )
+
+            final_score = (
+                0.70 * source.relevance_score
+                + 0.30 * source.quality_score
+            )
+
             ranked_sources.append(
-                source.model_copy(
-                    update={
-                        "relevance_score": score,
-                    }
+                (
+                    final_score,
+                    source,
                 )
             )
 
-        return sorted(
-            ranked_sources,
-            key=lambda source: source.relevance_score,
+        ranked_sources.sort(
+            key=lambda item: item[0],
             reverse=True,
         )
 
+        return [
+            source
+            for _, source in ranked_sources
+        ]
+
     @staticmethod
-    def _tokenize(text: str) -> set[str]:
+    def select(
+        sources: list[Source],
+        top_k: int = 3,
+    ) -> list[Source]:
+
+        return sources[:top_k]
+
+    @staticmethod
+    def _tokenize(
+        text: str,
+    ) -> set[str]:
 
         words = re.findall(
             r"\b[a-zA-Z]{3,}\b",

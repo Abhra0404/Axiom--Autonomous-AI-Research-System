@@ -38,7 +38,13 @@ class Source(BaseModel):
         default=0.0,
         ge=0.0,
         le=1.0,
-)
+    )
+    quality_score: float = Field(
+        default=0.0,
+        ge=0.0,
+        le=1.0,
+    )
+
 
 
 class Claim(BaseModel):

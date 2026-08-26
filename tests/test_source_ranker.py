@@ -66,3 +66,32 @@ def test_source_ranker_selects_top_k():
     )
 
     assert len(selected) == 3
+
+def test_source_ranker_assigns_quality_score():
+
+    sources = [
+        Source(
+            id="paper",
+            title="RAG hallucination research",
+            url="https://example.com/paper",
+            source_type="paper",
+            content="RAG hallucination research.",
+        ),
+        Source(
+            id="article",
+            title="RAG hallucination research",
+            url="https://example.com/article",
+            source_type="article",
+            content="RAG hallucination research.",
+        ),
+    ]
+
+    ranker = SourceRanker()
+
+    results = ranker.rank(
+        sources,
+        "RAG hallucination research",
+    )
+
+    assert results[0].quality_score == 1.0
+    assert results[1].quality_score == 0.45
