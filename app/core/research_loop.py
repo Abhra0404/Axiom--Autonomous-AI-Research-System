@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from app.models.schemas import (
     ClaimRelationship,
@@ -54,6 +54,7 @@ class ResearchLoop:
     def run(
         self,
         plan: ResearchPlan,
+        run_id: UUID | None = None,
     ) -> ResearchResult:
 
         # -----------------------------------------------------
@@ -61,7 +62,7 @@ class ResearchLoop:
         # -----------------------------------------------------
 
         state = ResearchState(
-            run_id=uuid4(),
+            run_id=run_id or uuid4(),
             status="running",
             started_at=datetime.now(
                 timezone.utc
