@@ -170,29 +170,29 @@ class ResearchLoop:
             # Evidence extraction
             # -------------------------------------------------
 
+            analyzed_source_ids = {
+                str(analysis.source_id)
+                for analysis in all_analyses
+            }
+
             for source in selected_sources:
 
-                already_analyzed = any(
-                    analysis.source_id == source.id
-                    if hasattr(
-                        analysis,
-                        "source_id",
-                    )
-                    else False
-                    for analysis in all_analyses
-                )
-
-                if already_analyzed:
+                if str(source.id) in analyzed_source_ids:
                     continue
 
-                analysis = (
-                    self.evidence_agent.analyze(
-                        source
-                    )
+                analysis = self.evidence_agent.analyze(
+                    source
                 )
+
+                if analysis is None:
+                    continue
 
                 all_analyses.append(
                     analysis
+                )
+
+                analyzed_source_ids.add(
+                    str(source.id)
                 )
 
                 print(

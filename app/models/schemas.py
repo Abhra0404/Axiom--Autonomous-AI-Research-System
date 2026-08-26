@@ -72,7 +72,7 @@ class ClaimRelationship(BaseModel):
         ge=0.0,
         le=1.0,
     )
-    
+
 class Evidence(BaseModel):
     id: str
     claim_id: str
@@ -86,6 +86,7 @@ class Evidence(BaseModel):
     location: str | None = None
 
 class EvidenceAnalysis(BaseModel):
+    source_id: str
     claims: list[Claim]
     evidence: list[Evidence]
 

@@ -46,6 +46,7 @@ def test_research_loop_stops_when_sufficient():
     )
 
     analysis = EvidenceAnalysis(
+        source_id="source-1",
         claims=[claim],
         evidence=[],
     )

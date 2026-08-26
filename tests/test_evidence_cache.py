@@ -13,6 +13,7 @@ def test_evidence_cache(tmp_path):
     )
 
     analysis = EvidenceAnalysis(
+        source_id="source-1",
         claims=[
             Claim(
                 id="claim-1",
