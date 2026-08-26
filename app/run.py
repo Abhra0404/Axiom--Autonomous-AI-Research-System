@@ -5,22 +5,26 @@ from uuid import uuid4
 from app.agents.critic import CriticAgent
 from app.agents.evidence import EvidenceAgent
 from app.agents.planner import Planner
+from app.agents.report import ReportAgent
 from app.agents.researcher import Researcher
+
+from app.core.claim_analyzer import ClaimAnalyzer
+from app.core.event_logger import ResearchEventLogger
+from app.core.evidence_cache import EvidenceCache
 from app.core.gemini_llm import GeminiProvider
 from app.core.research_loop import ResearchLoop
-from app.core.run_store import RunStore
+from app.core.research_run_store import ResearchRunStore
+from app.core.report_renderer import ReportRenderer
+from app.core.report_store import ReportStore
+from app.core.source_cache import SourceCache
 from app.core.source_ingestor import SourceIngestor
 from app.core.source_manager import SourceManager
 from app.core.source_ranker import SourceRanker
 from app.core.tavily_search import TavilySearchProvider
-from app.models.schemas import ResearchRequest, ResearchRun
-from app.agents.report import ReportAgent
-from app.core.report_renderer import ReportRenderer
-from app.core.report_store import ReportStore
-from app.core.source_cache import SourceCache
-from app.core.evidence_cache import EvidenceCache
-from app.core.claim_analyzer import ClaimAnalyzer
 
+from app.models.schemas import (
+    ResearchRequest,
+)
 
 
 def run_research(topic: str) -> None:
@@ -38,30 +42,40 @@ def run_research(topic: str) -> None:
     print("AXIOM — AUTONOMOUS RESEARCH SYSTEM")
     print("=" * 70)
 
-    print(f"\nResearch question:")
+    print("\nResearch question:")
     print(f"  {request.topic}")
 
     # =========================================================
-    # 2. Planner
+    # 2. LLM + Planner
     # =========================================================
 
     print("\n[1/3] Creating research plan...")
 
+    llm = GeminiProvider()
+
     planner = Planner()
 
-    plan = planner.create_plan(request)
+    plan = planner.create_plan(
+        request
+    )
 
-    print(f"\nObjectives: {len(plan.objectives)}")
+    print(
+        f"\nObjectives: "
+        f"{len(plan.objectives)}"
+    )
 
     for objective in plan.objectives:
         print(f"  - {objective}")
 
-    print(f"\nSub-questions: {len(plan.sub_questions)}")
+    print(
+        f"\nSub-questions: "
+        f"{len(plan.sub_questions)}"
+    )
 
     for question in plan.sub_questions:
         print(f"  - {question}")
 
-    print(f"\nInitial search queries:")
+    print("\nInitial search queries:")
 
     for query in plan.search_queries:
         print(f"  - {query}")
@@ -70,9 +84,21 @@ def run_research(topic: str) -> None:
     # 3. Build Agents + Services
     # =========================================================
 
-    print("\n[2/3] Starting autonomous research loop...")
+    print(
+        "\n[2/3] Starting autonomous research loop..."
+    )
 
-    search_provider = TavilySearchProvider()
+    # ---------------------------------------------------------
+    # Search
+    # ---------------------------------------------------------
+
+    search_provider = (
+        TavilySearchProvider()
+    )
+
+    # ---------------------------------------------------------
+    # Source ingestion + cache
+    # ---------------------------------------------------------
 
     source_cache = SourceCache()
 
@@ -88,9 +114,15 @@ def run_research(topic: str) -> None:
         source_manager,
     )
 
+    # ---------------------------------------------------------
+    # Source ranking
+    # ---------------------------------------------------------
+
     source_ranker = SourceRanker()
 
-    llm = GeminiProvider()
+    # ---------------------------------------------------------
+    # Evidence Agent
+    # ---------------------------------------------------------
 
     evidence_cache = EvidenceCache()
 
@@ -99,9 +131,33 @@ def run_research(topic: str) -> None:
         cache=evidence_cache,
     )
 
+    # ---------------------------------------------------------
+    # Claim Analyzer
+    # ---------------------------------------------------------
+
+    claim_analyzer = ClaimAnalyzer(
+        llm
+    )
+
+    # ---------------------------------------------------------
+    # Critic
+    # ---------------------------------------------------------
+
     critic = CriticAgent(
         llm
     )
+
+    # ---------------------------------------------------------
+    # Event Logger
+    # ---------------------------------------------------------
+
+    event_logger = (
+        ResearchEventLogger()
+    )
+
+    # ---------------------------------------------------------
+    # Research Loop
+    # ---------------------------------------------------------
 
     research_loop = ResearchLoop(
         planner=planner,
@@ -110,11 +166,10 @@ def run_research(topic: str) -> None:
         critic=critic,
         source_ranker=source_ranker,
         claim_analyzer=claim_analyzer,
+        event_logger=event_logger,
         max_iterations=3,
     )
-    claim_analyzer = ClaimAnalyzer(
-        llm
-    )
+
     # =========================================================
     # 4. Execute Autonomous Research
     # =========================================================
@@ -122,9 +177,33 @@ def run_research(topic: str) -> None:
     result = research_loop.run(
         plan
     )
-    print("\nGenerating final research report...")
 
-    report_agent = ReportAgent(llm)
+    # =========================================================
+    # 5. Persist Research Run
+    # =========================================================
+
+    run_store = ResearchRunStore()
+
+    run_file = run_store.save(
+        result
+    )
+
+    print(
+        f"\nResearch run saved to:"
+        f"\n  {run_file}"
+    )
+
+    # =========================================================
+    # 6. Generate Final Research Report
+    # =========================================================
+
+    print(
+        "\nGenerating final research report..."
+    )
+
+    report_agent = ReportAgent(
+        llm
+    )
 
     report = report_agent.generate(
         result.plan,
@@ -136,9 +215,9 @@ def run_research(topic: str) -> None:
     renderer = ReportRenderer()
 
     all_claims = [
-    claim
-    for analysis in result.analyses
-    for claim in analysis.claims
+        claim
+        for analysis in result.analyses
+        for claim in analysis.claims
     ]
 
     all_evidence = [
@@ -155,7 +234,7 @@ def run_research(topic: str) -> None:
     )
 
     # =========================================================
-    # 5. Display Final Results
+    # 7. Display Final Results
     # =========================================================
 
     print("\n" + "=" * 70)
@@ -210,6 +289,31 @@ def run_research(topic: str) -> None:
             )
 
     # ---------------------------------------------------------
+    # Claim relationships
+    # ---------------------------------------------------------
+
+    if result.relationships:
+
+        print("\n" + "-" * 70)
+        print("CLAIM RELATIONSHIPS")
+        print("-" * 70)
+
+        for relationship in (
+            result.relationships
+        ):
+
+            print(
+                f"\n• {relationship.claim_a}"
+                f" --{relationship.relationship}--> "
+                f"{relationship.claim_b}"
+            )
+
+            print(
+                f"  Confidence: "
+                f"{relationship.confidence:.2f}"
+            )
+
+    # ---------------------------------------------------------
     # Critique
     # ---------------------------------------------------------
 
@@ -234,60 +338,49 @@ def run_research(topic: str) -> None:
         print("\nStrengths:")
 
         for strength in critique.strengths:
-            print(f"  - {strength}")
+            print(
+                f"  - {strength}"
+            )
 
     if critique.weaknesses:
 
         print("\nWeaknesses:")
 
         for weakness in critique.weaknesses:
-            print(f"  - {weakness}")
+            print(
+                f"  - {weakness}"
+            )
 
     if critique.missing_information:
 
         print("\nMissing information:")
 
-        for item in critique.missing_information:
-            print(f"  - {item}")
+        for item in (
+            critique.missing_information
+        ):
+            print(
+                f"  - {item}"
+            )
 
     if critique.follow_up_questions:
 
         print("\nFollow-up questions:")
 
-        for question in critique.follow_up_questions:
-            print(f"  - {question}")
+        for question in (
+            critique.follow_up_questions
+        ):
+            print(
+                f"  - {question}"
+            )
 
     # =========================================================
-    # 6. Persist Research Run
-    # =========================================================
-
-    print("\n[3/3] Saving research run...")
-
-    research_run = ResearchRun(
-        id=f"run_{uuid4().hex[:12]}",
-        question=request.topic,
-        created_at=datetime.now(
-            timezone.utc
-        ),
-        plan=result.plan,
-        sources=result.sources,
-        analyses=result.analyses,
-    )
-
-    store = RunStore()
-
-    run_file = store.save(
-        research_run
-    )
-
-    # =========================================================
-    # 7. Save Research Report
+    # 8. Save Research Report
     # =========================================================
 
     report_store = ReportStore()
 
     report_file = report_store.save(
-        research_run.id,
+        result.state.run_id,
         markdown_report,
     )
 
@@ -297,7 +390,7 @@ def run_research(topic: str) -> None:
     )
 
     # =========================================================
-    # 8. Summary
+    # 9. Summary
     # =========================================================
 
     print("\n" + "=" * 70)
@@ -306,7 +399,7 @@ def run_research(topic: str) -> None:
 
     print(
         f"\nRun ID:"
-        f"\n  {research_run.id}"
+        f"\n  {result.state.run_id}"
     )
 
     print(
@@ -330,6 +423,11 @@ def run_research(topic: str) -> None:
     )
 
     print(
+        f"\nRelationships:"
+        f"\n  {len(result.relationships)}"
+    )
+
+    print(
         f"\nResearch sufficient:"
         f"\n  {critique.sufficient}"
     )
@@ -340,12 +438,21 @@ def run_research(topic: str) -> None:
     )
 
     print(
-        f"\nSaved to:"
+        f"\nResearch run:"
         f"\n  {run_file}"
+    )
+
+    print(
+        f"\nReport:"
+        f"\n  {report_file}"
     )
 
     print("\n" + "=" * 70)
 
+
+# =============================================================
+# CLI
+# =============================================================
 
 if __name__ == "__main__":
 
@@ -362,4 +469,6 @@ if __name__ == "__main__":
         sys.argv[1:]
     )
 
-    run_research(topic)
+    run_research(
+        topic
+    )

@@ -1,0 +1,982 @@
+{
+  "plan": {
+    "question": "Does RAG reduce hallucinations in LLMs?",
+    "objectives": [
+      "Investigate the current state of research on: Does RAG reduce hallucinations in LLMs?",
+      "Identify major findings and competing perspectives",
+      "Evaluate the quality of available evidence"
+    ],
+    "sub_questions": [
+      "What is currently known about Does RAG reduce hallucinations in LLMs??",
+      "What are the main arguments or findings related to Does RAG reduce hallucinations in LLMs??",
+      "What limitations or gaps exist in the current research?"
+    ],
+    "search_queries": [
+      "Does RAG reduce hallucinations in LLMs?",
+      "Does RAG reduce hallucinations in LLMs? research paper",
+      "Does RAG reduce hallucinations in LLMs? study",
+      "Does RAG reduce hallucinations in LLMs? benchmark"
+    ]
+  },
+  "sources": [
+    {
+      "id": "b43f8e16786a1aa9",
+      "title": "Retrieval-augmented generation",
+      "url": "https://en.wikipedia.org/wiki/Retrieval-augmented_generation",
+      "source_type": "article",
+      "authors": [],
+      "published_date": null,
+      "content": "Retrieval-augmented generation\nRetrieval-augmented generation (RAG) is a technique that enables [large language models](https://en.wikipedia.org/wiki/Large_language_model) (LLMs) to retrieve and incorporate new information from external data sources.[\\[1\\]](#cite_note-IBM-2023-1) With RAG, LLMs first refer to a specified set of documents, then respond to user queries. These documents supplement information from the LLM's pre-existing [training data](https://en.wikipedia.org/wiki/Training_data).[\\[2\\]](#cite_note-MIT_Technology_Review-2024-2) This allows LLMs to use domain-specific and/or updated information that is not available in the training data.[\\[2\\]](#cite_note-MIT_Technology_Review-2024-2) For example, this enables LLM-based [chatbots](https://en.wikipedia.org/wiki/Chatbot) to access internal company data or generate responses based on authoritative sources. The technique was first proposed in 2020 and has since become a widely adopted approach in modern AI systems.\nRAG improves LLMs by incorporating [information retrieval](https://en.wikipedia.org/wiki/Information_retrieval) before generating responses.[\\[3\\]](#cite_note-BUZBP-3) Unlike LLMs that rely on static training data, RAG pulls relevant text from databases, uploaded documents, or web sources.[\\[1\\]](#cite_note-IBM-2023-1) According to [Ars Technica](https://en.wikipedia.org/wiki/Ars_Technica), \"RAG is a way of improving LLM performance, in essence by blending the LLM process with a web search or other document look-up process to help LLMs stick to the facts.\" This method helps reduce [AI hallucinations](https://en.wikipedia.org/wiki/AI_hallucinations),[\\[3\\]](#cite_note-BUZBP-3) which have caused chatbots to describe policies that don't exist, or recommend nonexistent legal cases to lawyers that are looking for citations to support their arguments.[\\[4\\]](#cite_note-Ars_Technica-2024-4)\nRAG also reduces the need to retrain LLMs with new data, saving on computational and financial costs.[\\[1\\]](#cite_note-IBM-2023-1) Beyond efficiency gains, RAG also allows LLMs to include sources in their responses, so users can verify the cited sources. This provides greater transparency, as users can cross-check retrieved content to ensure accuracy and relevance.\nThe term retrieval-augmented generation (RAG) was introduced in a 2020 paper that described combining a parametric language model with a non-parametric external memory accessed through retrieval at inference time.[\\[3\\]](#cite_note-BUZBP-3)\nRAG and LLM limitations\n[\n[edit](/w/index.php?title=Retrieval-augmented_generation&action=edit\u00a7ion=1)]\nLLMs can provide incorrect information. For example, when Google first demonstrated its LLM tool \"[Google Bard](https://en.wikipedia.org/wiki/Google_Bard)\" (later re-branded to Gemini), the LLM provided incorrect information about the [James Webb Space Telescope](https://en.wikipedia.org/wiki/James_Webb_Space_Telescope). This error contributed to a $100 billion decline in [Google's](https://en.wikipedia.org/wiki/Alphabet_Inc.) stock value.[\\[4\\]](#cite_note-Ars_Technica-2024-4) RAG is used to prevent these errors, but it does not solve all the problems. For example, LLMs can generate misinformation even when pulling from factually correct sources if they misinterpret the context. [MIT Technology Review](https://en.wikipedia.org/wiki/MIT_Technology_Review) gives the example of an AI-generated response stating, \"The United States has had one Muslim president, Barack Hussein Obama.\" The model retrieved this from the rhetorical chapter title \"Barack Hussein Obama: America's First Muslim President?\" in the book Faith in the New Millennium: The Future of Religion and American Politics.[\\[5\\]](#cite_note-5) The LLM did not \"know\" or \"understand\" the context of the title, generating a false statement.[\\[2\\]](#cite_note-MIT_Technology_Review-2024-2)\nLLMs with RAG are programmed to prioritize new information. This technique has been called \"prompt stuffing.\" Without prompt stuffing, the LLM's input is generated by a user; with prompt stuffing, additional relevant context is added to this input to guide the model's response. This approach provides the LLM with key information early in the prompt, encouraging it to prioritize the supplied data over pre-existing training knowledge.[\\[6\\]](#cite_note-6)\nProcess\n[\n[edit](/w/index.php?title=Retrieval-augmented_generation&action=edit\u00a7ion=2)]\nRetrieval-augmented generation (RAG) enhances [large language models](https://en.wikipedia.org/wiki/Large_language_model) (LLMs) by incorporating an [information-retrieval](https://en.wikipedia.org/wiki/Information_retrieval) mechanism that allows models to access and utilize additional data beyond their original training set. [Ars Technica](https://en.wikipedia.org/wiki/Ars_Technica) notes that \"when new information becomes available, rather than having to retrain the model, all that's needed is to augment the model's external knowledge base with the updated information\" (\"augmentation\").[\\[4\\]](#cite_note-Ars_Technica-2024-4) IBM states that \"in the generative phase, the LLM draws from the augmented prompt and its internal representation of its training data to synthesize\" an answer.[\\[1\\]](#cite_note-IBM-2023-1)\nRAG key stages\n[\n[edit](/w/index.php?title=Retrieval-augmented_generation&action=edit\u00a7ion=3)]\nTypically, the data to be referenced is converted into LLM [embeddings](https://en.wikipedia.org/wiki/Word_embeddings), numerical representations in the form of a large vector space. RAG can be used on unstructured (usually text), semi-structured, or structured data (for example [knowledge graphs](https://en.wikipedia.org/wiki/Knowledge_graphs)). These embeddings are then stored in a [vector database](https://en.wikipedia.org/wiki/Vector_database) to allow for [document retrieval](https://en.wikipedia.org/wiki/Document_retrieval).\nGiven a user query, a document retriever is first called to select the most relevant documents that will be used to augment the query.[\\[2\\]](#cite_note-MIT_Technology_Review-2024-2)[\\[3\\]](#cite_note-BUZBP-3) This comparison can be done using a variety of methods, which depend in part on the type of indexing used.[\\[1\\]](#cite_note-IBM-2023-1)\nThe model feeds this relevant retrieved information into the LLM via [prompt engineering](https://en.wikipedia.org/wiki/Prompt_engineering) of the user's original query. Newer implementations (as of 2023[\\[update\\]](https://en.wikipedia.org/w/index.php?title=Retrieval-augmented_generation&action=edit)) can also incorporate specific augmentation modules with abilities such as expanding queries into multiple domains and using memory and self-improvement to learn from previous retrievals.[[citation needed](https://en.wikipedia.org/wiki/Wikipedia:Citation_needed)]\nFinally, the LLM can generate output based on both the query and the retrieved documents.[\\[2\\]](#cite_note-MIT_Technology_Review-2024-2)[\\[3\\]](#cite_note-BUZBP-3) Some models incorporate extra steps to improve output, such as the re-ranking of retrieved information, context selection, and [fine-tuning](<https://en.wikipedia.org/wiki/Fine-tuning_(deep_learning)>).\nApplications\n[\n[edit](/w/index.php?title=Retrieval-augmented_generation&action=edit\u00a7ion=4)]\nRetrieval-augmented generation is used in applications where generated responses need to be grounded in external or frequently updated information.[[citation needed](https://en.wikipedia.org/wiki/Wikipedia:Citation_needed)]\nIn healthcare, RAG has been studied as a way to ground large language model outputs in external medical knowledge sources, although reviews have noted continuing challenges around evaluation, ethics, and clinical reliability.[\\[7\\]](#cite_note-7)\nImprovements\n[\n[edit](/w/index.php?title=Retrieval-augmented_generation&action=edit\u00a7ion=5)]\nImprovements to the basic process above can be applied at different stages in the RAG flow.\nEncoder\n[\n[edit](/w/index.php?title=Retrieval-augmented_generation&action=edit\u00a7ion=6)]\nThese methods focus on the encoding of text as either dense or sparse vectors. [Sparse vectors](https://en.wikipedia.org/wiki/Sparse_vector), which encode the identity of a word, are typically [dictionary](https://en.wikipedia.org/wiki/Large_language_model#Tokenization)-length and contain mostly zeros. [Dense vectors](https://en.wikipedia.org/wiki/Dense_matrix), which encode meaning, are more compact and contain fewer zeros. Various enhancements can improve the way similarities are calculated in the vector stores (databases).[\\[8\\]](#cite_note-Luan-2021-8)\n- Performance improves by optimizing how vector similarities are calculated. [Dot products](https://en.wikipedia.org/wiki/Dot_product) enhance similarity scoring, while[approximate nearest neighbor](https://en.wikipedia.org/wiki/Approximate_nearest_neighbor_search) (ANN) searches improve retrieval efficiency over[K-nearest neighbors](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm) (KNN) searches.[\\[9\\]](#cite_note-9)\n- Accuracy may be improved with Late Interactions, which allow the system to compare words more precisely after retrieval. This helps refine document ranking and improve search relevance.[\\[10\\]](#cite_note-colbert-10)\n- Hybrid vector approaches may be used to combine dense vector representations with sparse [one-hot](https://en.wikipedia.org/wiki/One-hot) vectors, taking advantage of the computational efficiency of sparse dot products over dense vector operations.[\\[8\\]](#cite_note-Luan-2021-8)\n- Other retrieval techniques focus on improving accuracy by refining how documents are selected. Some retrieval methods combine sparse representations, such as SPLADE, with query expansion strategies to improve search accuracy and recall.[\\[11\\]](#cite_note-11)\nRetriever-centric methods\n[\n[edit](/w/index.php?title=Retrieval-augmented_generation&action=edit\u00a7ion=7)]\nThese methods aim to enhance the quality of document retrieval in vector databases:\n- Pre-training the retriever using the Inverse Cloze Task (ICT), a technique that helps the model learn retrieval patterns by predicting masked text within documents.[\\[12\\]](#cite_note-orqa-12)\n- Supervised retriever optimization aligns retrieval probabilities with the generator model's likelihood distribution. This involves retrieving the top-k vectors for a given prompt, scoring the generated response's [perplexity](https://en.wikipedia.org/wiki/Perplexity) , and minimizing[KL divergence](https://en.wikipedia.org/wiki/KL_divergence) between the retriever's selections and the model's likelihoods to refine retrieval.[\\[13\\]](#cite_note-13)\n- Reranking techniques can refine retriever performance by prioritizing the most relevant retrieved documents during training.[\\[14\\]](#cite_note-14)\nLanguage model\n[\n[edit](/w/index.php?title=Retrieval-augmented_generation&action=edit\u00a7ion=8)]\nBy redesigning the language model with the retriever in mind, a 25-time smaller network can get comparable perplexity as its much larger counterparts.[\\[15\\]](#cite_note-borgeaud-15) Because it is trained from scratch, this method (Retro) incurs the high cost of training runs that the original RAG scheme avoided. The hypothesis is that by giving domain knowledge during training, Retro needs less focus on the domain and can devote its smaller weight resources only to language semantics. The redesigned language model is shown here.  \nIt has been reported that Retro is not reproducible, so modifications were made to make it so.  The more reproducible version is called Retro++ and includes in-context RAG.[\\[16\\]](#cite_note-wang2023a-16)\nChunking\n[\n[edit](/w/index.php?title=Retrieval-augmented_generation&action=edit\u00a7ion=9)]\nChunking involves various strategies for breaking up the data into vectors so the retriever can find details in it.\nHybrid search\n[\n[edit](/w/index.php?title=Retrieval-augmented_generation&action=edit\u00a7ion=10)]\nSometimes vector database searches (aka [semantic search](https://en.wikipedia.org/wiki/Semantic_search) technique) can miss key facts needed to answer a user's question. One way to mitigate this is to do a traditional text search (aka [full text search](https://en.wikipedia.org/wiki/Full-text_search)), combine those results to the text chunks linked to the retrieved vectors from the vector search, and feed the combined hybrid text (using effective scoring or reranking scoring) into the language model for generation.[\\[17\\]](#cite_note-17)\nChallenges\n[\n[edit](/w/index.php?title=Retrieval-augmented_generation&action=edit\u00a7ion=11)]\nRAG does not prevent hallucinations in LLMs. According to [Ars Technica](https://en.wikipedia.org/wiki/Ars_Technica), \"It is not a direct solution because the LLM can still hallucinate around the source material in its response.\"[\\[4\\]](#cite_note-Ars_Technica-2024-4)\nWhile RAG improves the accuracy of large language models (LLMs), it does not eliminate all challenges. One limitation is that while RAG reduces the need for frequent model retraining, it does not remove it entirely. Additionally, LLMs may struggle to recognize when they lack sufficient information to provide a reliable response. Without specific training, models may generate answers even when they should indicate uncertainty. According to [IBM](https://en.wikipedia.org/wiki/IBM), this issue can arise when the model lacks the ability to assess its own knowledge limitations.[\\[1\\]](#cite_note-IBM-2023-1)\nRAG poisoning\n[\n[edit](/w/index.php?title=Retrieval-augmented_generation&action=edit\u00a7ion=12)]\nRAG systems may retrieve factually correct but misleading sources, leading to errors in interpretation. In some cases, an LLM may extract statements from a source without considering its context, resulting in an incorrect conclusion. Additionally, when faced with conflicting information, RAG models may struggle to determine which source is accurate. The worst case outcome of this limitation is that the model may combine details from multiple sources producing responses that merge outdated and updated information in a misleading manner. According to the [MIT Technology Review](https://en.wikipedia.org/wiki/MIT_Technology_Review), these issues occur because RAG systems may misinterpret the data they retrieve.[\\[2\\]](#cite_note-MIT_Technology_Review-2024-2)\nOn September 2025, Israel paid $6 million in order to sway public opinion to a more favourable for the country ([hasbara](https://en.wikipedia.org/wiki/Hasbara)), based on this limitation.[\\[18\\]](#cite_note-18)[\\[19\\]](#cite_note-19)\nReferences\n[\n[edit](/w/index.php?title=Retrieval-augmented_generation&action=edit\u00a7ion=13)]\n- [1](#cite_ref-IBM-2023_1-0)[2](#cite_ref-IBM-2023_1-1)[3](#cite_ref-IBM-2023_1-2)[4](#cite_ref-IBM-2023_1-3)[5](#cite_ref-IBM-2023_1-4)[6](#cite_ref-IBM-2023_1-5)[\"What is retrieval-augmented generation?\"](https://research.ibm.com/blog/retrieval-augmented-generation-RAG) . IBM. 22 August 2023. Retrieved 7 March 2025.\n- [1](#cite_ref-MIT_Technology_Review-2024_2-0)[2](#cite_ref-MIT_Technology_Review-2024_2-1)[3](#cite_ref-MIT_Technology_Review-2024_2-2)[4](#cite_ref-MIT_Technology_Review-2024_2-3)[5](#cite_ref-MIT_Technology_Review-2024_2-4)[6](#cite_ref-MIT_Technology_Review-2024_2-5)[\"Why Google's AI Overviews gets things wrong\"](https://www.technologyreview.com/2024/05/31/1093019/why-are-googles-ai-overviews-results-so-bad/) . MIT Technology Review. 31 May 2024. Retrieved 7 March 2025.\n- [1](#cite_ref-BUZBP_3-0)[2](#cite_ref-BUZBP_3-1)[3](#cite_ref-BUZBP_3-2)[4](#cite_ref-BUZBP_3-3)[5](#cite_ref-BUZBP_3-4) Lewis, Patrick; Perez, Ethan; Piktus, Aleksandra; Petroni, Fabio; Karpukhin, Vladimir; Goyal, Naman; K\u00fcttler, Heinrich; Lewis, Mike; Yih, Wen-tau; Rockt\u00e4schel, Tim; Riedel, Sebastian; Kiela, Douwe (2020).[\"Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks\"](https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html) . Advances in Neural Information Processing Systems. 33. Curran Associates, Inc.: 9459\u20139474.[arXiv](<https://en.wikipedia.org/wiki/ArXiv_(identifier)>) :[2005.11401](https://arxiv.org/abs/2005.11401) .\n- [1](#cite_ref-Ars_Technica-2024_4-0)[2](#cite_ref-Ars_Technica-2024_4-1)[3](#cite_ref-Ars_Technica-2024_4-2)[4](#cite_ref-Ars_Technica-2024_4-3)[\"Can a technology called RAG keep AI models from making stuff up?\"](https://arstechnica.com/ai/2024/06/can-a-technology-called-rag-keep-ai-models-from-making-stuff-up/) . Ars Technica. 6 June 2024. Retrieved 7 March 2025.\n- [\u2191](#cite_ref-5) Goetz, Rebecca Anne (2015). \"Barack Hussein Obama: America's First Muslim President?\". In Sutton, Matthew Avery; Dochuk, Darren (eds.). Faith in the New Millennium: The Future of Religion and American Politics. Oxford University Press.[doi](<https://en.wikipedia.org/wiki/Doi_(identifier)>) :[10.1093/acprof:oso/9780199372690.003.0006](https://doi.org/10.1093%2Facprof%3Aoso%2F9780199372690.003.0006) .[ISBN](<https://en.wikipedia.org/wiki/ISBN_(identifier)>)[9780199372737](https://en.wikipedia.org/wiki/Special:BookSources/9780199372737) .\n- [\u2191](#cite_ref-6)[\"Mitigating LLM hallucinations in text summarisation\"](https://www.bbc.co.uk/rd/articles/2024-06-mitigating-llm-hallucinations-in-text-summarisation) . BBC. 20 June 2024. Retrieved 7 March 2025.\n- [\u2191](#cite_ref-7) Amugongo, Lameck Mbangula; Mascheroni, Pietro; Brooks, Steven; Doering, Stefan; Seidel, Jan (2025-06-11).[\"Retrieval augmented generation for large language models in healthcare: A systematic review\"](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12157099) . PLOS Digital Health. 4 (6) e0000877.[doi](<https://en.wikipedia.org/wiki/Doi_(identifier)>) :[10.1371/journal.pdig.0000877](https://doi.org/10.1371%2Fjournal.pdig.0000877) .[PMC](<https://en.wikipedia.org/wiki/PMC_(identifier)>)[12157099](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12157099) .\n- [1](#cite_ref-Luan-2021_8-0)[2](#cite_ref-Luan-2021_8-1) Luan, Yi; Eisenstein, Jacob; Toutanova, Kristina; Collins, Michael (26 April 2021).[\"Sparse, Dense, and Attentional Representations for Text Retrieval\"](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00369/100684/Sparse-Dense-and-Attentional-Representations-for) . Transactions of the Association for Computational Linguistics. 9: 329\u2013345.[arXiv](<https://en.wikipedia.org/wiki/ArXiv_(identifier)>) :[2005.00181](https://arxiv.org/abs/2005.00181) .[doi](<https://en.wikipedia.org/wiki/Doi_(identifier)>) :[10.1162/tacl_a_00369](https://doi.org/10.1162%2Ftacl_a_00369) . Retrieved 15 March 2025.\n- [\u2191](#cite_ref-9)[\"Information retrieval\"](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/rag/rag-information-retrieval) . Microsoft. 10 January 2025. Retrieved 15 March 2025.\n- [\u2191](#cite_ref-colbert_10-0) Khattab, Omar; Zaharia, Matei (2020).[\"ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT\"](https://dl.acm.org/doi/10.1145/3397271.3401075) . Proceedings of the 43rd International ACM SIGIR Conference on Research and Development in Information Retrieval. pp.\u00a039\u201348.[doi](<https://en.wikipedia.org/wiki/Doi_(identifier)>) :[10.1145/3397271.3401075](https://doi.org/10.1145%2F3397271.3401075) .[ISBN](<https://en.wikipedia.org/wiki/ISBN_(identifier)>)[978-1-4503-8016-4](https://en.wikipedia.org/wiki/Special:BookSources/978-1-4503-8016-4) .\n- [\u2191](#cite_ref-11) Wang, Yup; Conroy, John M.; Molino, Neil; Yang, Julia; Green, Mike (2024).[\"Laboratory for Analytic Sciences in TREC 2024 Retrieval Augmented Generation Track\"](https://trec.nist.gov/pubs/trec33/index.html) . NIST TREC 2024. Retrieved 15 March 2025.\n- [\u2191](#cite_ref-orqa_12-0) Lee, Kenton; Chang, Ming-Wei; Toutanova, Kristina (2019).[\"\"Latent Retrieval for Weakly Supervised Open Domain Question Answering\"\"](https://aclanthology.org/P19-1612.pdf) (PDF).\n- [\u2191](#cite_ref-13) Shi, Weijia; Min, Sewon; Yasunaga, Michihiro; Seo, Minjoon; James, Rich; Lewis, Mike; Zettlemoyer, Luke; Yih, Wen-tau (June 2024).[\"REPLUG: Retrieval-Augmented Black-Box Language Models\"](https://aclanthology.org/2024.naacl-long.463/) . Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers). pp.\u00a08371\u20138384.[arXiv](<https://en.wikipedia.org/wiki/ArXiv_(identifier)>) :[2301.12652](https://arxiv.org/abs/2301.12652) .[doi](<https://en.wikipedia.org/wiki/Doi_(identifier)>) :[10.18653/v1/2024.naacl-long.463](https://doi.org/10.18653%2Fv1%2F2024.naacl-long.463) . Retrieved 16 March 2025.\n- [\u2191](#cite_ref-14) Ram, Ori; Levine, Yoav; Dalmedigos, Itay; Muhlgay, Dor; Shashua, Amnon; Leyton-Brown, Kevin; Shoham, Yoav (2023).[\"In-Context Retrieval-Augmented Language Models\"](https://aclanthology.org/2023.tacl-1.75/) . Transactions of the Association for Computational Linguistics. 11: 1316\u20131331.[arXiv](<https://en.wikipedia.org/wiki/ArXiv_(identifier)>) :[2302.00083](https://arxiv.org/abs/2302.00083) .[doi](<https://en.wikipedia.org/wiki/Doi_(identifier)>) :[10.1162/tacl_a_00605](https://doi.org/10.1162%2Ftacl_a_00605) . Retrieved 16 March 2025.\n- [\u2191](#cite_ref-borgeaud_15-0) Borgeaud, Sebastian; Mensch, Arthur (2021).[\"Improving language models by retrieving from trillions of tokens\"](https://proceedings.mlr.press/v162/borgeaud22a/borgeaud22a.pdf) (PDF).\n- [\u2191](#cite_ref-wang2023a_16-0) Wang, Boxin; Ping, Wei; Xu, Peng; McAfee, Lawrence; Liu, Zihan; Shoeybi, Mohammad; Dong, Yi; Kuchaiev, Oleksii; Li, Bo; Xiao, Chaowei; Anandkumar, Anima; Catanzaro, Bryan (2023).[\"Shall We Pretrain Autoregressive Language Models with Retrieval? A Comprehensive Study\"](https://aclanthology.org/2023.emnlp-main.482/) . Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing. pp.\u00a07763\u20137786.[doi](<https://en.wikipedia.org/wiki/Doi_(identifier)>) :[10.18653/v1/2023.emnlp-main.482](https://doi.org/10.18653%2Fv1%2F2023.emnlp-main.482) .\n- [\u2191](#cite_ref-17) Bruch, Sebastian; Gai, Siyu; Ingber, Amir (2023). \"An Analysis of Fusion Functions for Hybrid Retrieval\". ACM Transactions on Information Systems. 42 (1): 1\u201335.[arXiv](<https://en.wikipedia.org/wiki/ArXiv_(identifier)>) :[2210.11934](https://arxiv.org/abs/2210.11934) .[doi](<https://en.wikipedia.org/wiki/Doi_(identifier)>) :[10.1145/3596512](https://doi.org/10.1145%2F3596512) .\n- [\u2191](#cite_ref-18)[\"Israel Pays $6 Million on GPT Training to Sway US Youth Opinion on Gaza\"](https://insidetelecom.com/hasbara-israel-targets-chatgpt/) . Inside Telecom. 2025-09-30. Retrieved 2026-01-11.\n- [\u2191](#cite_ref-19) Cordall, Simon Speakman.[\"Spinning genocide: How is Israel using US PR firms to frame its Gaza war?\"](https://www.aljazeera.com/news/2025/10/30/spinning-genocide-how-israel-is-using-us-pr-firms-to-frame-its-gaza-war) . Al Jazeera. Retrieved 2026-01-14.",
+      "retrieved_at": null,
+      "search_query": "What is retrieval augmented generation?",
+      "relevance_score": 0.0,
+      "quality_score": 0.0
+    },
+    {
+      "id": "619acb167250fe6e",
+      "title": "RAG hallucination: What is it and how to avoid it",
+      "url": "https://www.k2view.com/blog/rag-hallucination",
+      "source_type": "article",
+      "authors": [],
+      "published_date": null,
+      "content": "Table of contents\n                \nWhat is Retrieval-Augmented Generation (RAG)?\nA Large Language Model (LLM) is a machine learning model that can generate text, translate languages, answer questions, and much more. The problem is it doesn\u2019t always tell the truth. The reason? An LLM relies solely on the information it\u2019s trained on \u2013 and retraining it is time-consuming and expensive. Because its training data is based on stale, static, and publicly available information, an LLM may provide out-of-date, false, or generic responses as opposed to timely, true, and focused answers.\n[Retrieval-Augmented Generation](/what-is-retrieval-augmented-generation/) (RAG) is Generative AI (GenAI) framework designed to infuse an LLM with trusted\u00a0[AI-ready data](/solutions/ai-ready-data/), fresh from a company\u2019s own sources, to have it generate more accurate and relevant responses.\nHow does RAG work? When a user asks a question, RAG retrieves information specifically relevant to that query from up-to-date internal sources, then combines that information with the user's query. RAG creates an enhanced prompt which is fed to the LLM, allowing the model to generate a response based on both its inherent external knowledge combined with up-to-date internal data. By allowing the LLM to ground its answer in real internal data, [active retrieval-augmented generation](/blog/active-retrieval-augmented-generation/) improves accuracy and reduces hallucinations. That\u2019s the theory, in any case. In reality, RAG is also prone to [AI hallucinations](/what-are-ai-hallucinations/)\u00a0since, until now, it only relies on your unstructured, general data.\nGet the condensed version of the [Gartner RAG report](/gartner-rag-report-dl) courtesy of K2view.\u00a0\nHow do AI and RAG hallucinations differ?\nAn AI hallucination refers to an output that significantly deviates from factual grounding. These deviations manifest themselves as being incorrect, nonsensical, or inconsistent. Hallucinations occur as a result of the inherent limitations of LLM training data, as described above, or when the model fails to correlate the intent or context of the query to the data required to generate a meaningful response.\nAlthough RAG was designed to help reduce AI hallucinations, in its conventional form (augmenting an LLM with internal unstructured data only), a RAG hallucination can still occur.\nFor example, a cellular subscriber may receive an incorrect answer about their average monthly bill from the operator\u2019s [RAG chatbot](/blog/rag-chatbot/) \u2013 because the company data may have included bills or charges that weren\u2019t theirs.\nOr an airline\u2019s customer service bot may [provide travelers with misleading airfare information](/blog/human-in-the-loop/) because the augmented data did not include any policy docs on refunding overpayments.\nHow to reduce AI hallucinations\nAI researchers are exploring several key approaches to combating hallucinations, working towards a future where AI is better grounded in reality. The key approaches include:\n- \nGrounding generative AI apps with higher quality public data The bedrock of GenAI's performance is the publicly available data it's trained on. Researchers prioritize high-quality, diverse, and factual information. Techniques like data cleansing and bias filtering ensure that LLMs are trained on more reliable sources.\n- \nFine-tuning with fact-checking Fact-checking mechanisms act as a critical second layer to [fine-tuning](/blog/retrieval-augmented-generation-vs-fine-tuning/) . As AI generates text, these mechanisms compare it against real-world knowledge bases like scientific publications or verified news articles. Inconsistencies get flagged, prompting the LLM to refine its output based on more factual grounding.\n- \nTeaching better reasoning Researchers are constantly improving how AI reasons and understands the world. By incorporating logic and common-sense reasoning techniques, generative AI can better judge the plausibility of its creations.\n- \nCiting sources Understanding how generative AI arrives at an answer is crucial. Techniques are being developed to show users the sources it used to generate its response. This transparency allows users to assess the trustworthiness of the information and identify potential biases.\n- \nUsing RAG to augment LLMs with private organizational data [RAG AI](/blog/rag-ai/) combats AI hallucinations by providing factual grounding. RAG searches an organization\u2019s private data sources for relevant information to supplement the LLM's public knowledge \u2013 allowing it to anchor its responses in actual data, reducing the risk of fabricated or whimsical outputs.\nReducing AI hallucinations is top of mind for data teams. Our recent survey on the State of Enterprise Data Readiness for GenAI shows that enterprises are making meaningful progress toward production GenAI, with 45% planning to deploy or expand use cases in 2026. However, the findings make clear that data challenges still dominate, from guardrails and readiness to data quality, fragmented systems, and security and privacy concerns.\nHow to reduce RAG hallucinations\nAs explained, RAG is not a silver bullet and cannot completely eliminate AI hallucinations. Retrieval-augmented generation is limited by its:\u00a0\n- \nData quality RAG relies on the quality and accuracy of the internal knowledge bases it searches. Biases or errors in these sources can still influence the LLM's response.\n- \nContextual awareness While RAG provides factual [LLM grounding](/blog/llm-grounding/) , it might not fully grasp the nuances of the prompt or user intent. This can lead to the LLM incorporating irrelevant information or missing key points.\n- \nInternal reasoning and creativity RAG focuses on factual grounding but doesn't directly address the GenAI's internal reasoning processes. The [RAG LLM](/blog/rag-llm/) might still struggle with logic or common-sense reasoning, leading to nonsensical outputs despite factually accurate information.\nDespite these challenges, RAG is still a significant step forward. By providing a factual foundation based on an organization\u2019s AI-ready data, it significantly reduces hallucinations. Additionally, research is ongoing to improve RAG by:\n- \nEnhanced information filtering Techniques are being developed to assess the credibility of retrieved information before presenting it to the AI.\n- \nImproved context awareness Advancements in Natural Language Processing (NLP) will help generative AI apps better understand the user's intent and the broader context of the prompt.\n- \nIntegrated reasoning models Researchers are exploring ways to incorporate logic and common-sense reasoning into [RAG GenAI](/blog/rag-genai/) , further reducing the risk of nonsensical outputs.\nThat said, an exciting new approach called GenAI Data Fusion, infuses LLMs with structured data from enterprise systems like CRM and DBMS. Described further in the next section, it promises to turn reduce RAG hallucinations by grounding RAG chatbots with trusted enterprise data.\nHow K2view makes RAG hallucination-free\nOne of the most effective ways to combat GenAI and RAG hallucinations is by using the most advanced [RAG tool](/solutions/rag-tool/), one that retrieves/augments both structured AND unstructured data from a company\u2019s own private data sources.\nThis approach, called GenAI Data Fusion, accesses the structured data of a single business entity \u2013 customer, vendor, or order \u2013 from enterprise systems based on the concept of [data products](/what-is-a-data-product/). \u00a0\nA [data-as-a-product](/blog/data-as-a-product/) approach enables GenAI data fusion to access dynamic data from multiple enterprise systems, not just static documents from knowledge bases. This means LLMs can leverage RAG to integrate up-to-date customer 360 or product 360 data from all relevant data sources, turning that data and context into relevant prompts. These prompts are automatically fed into the LLM along with the user\u2019s query, enabling the LLM to generate a more accurate and personalized response.\nK2View\u2019s [data product platform](/platform/data-product-platform/) lets RAG access data products via streaming, messaging, CDC, or API \u2013 in any variation \u2013 to unify data from many different source systems. A data product approach can be applied to various RAG use cases to:\u00a0\n- \nHandle problems quicker.\n- \nImplement hyper-personalized marketing campaigns.\n- \nPersonalize cross-/up-sell recommendations.\n- \nDetect fraud by tracking suspicious activity in user accounts.\n\u00a0Meet the world\u2019s most advanced [RAG tool](/solutions/rag-tool/) \u2013 GenAI Data Fusion by K2view.",
+      "retrieved_at": null,
+      "search_query": "Does RAG reduce hallucinations in LLMs?",
+      "relevance_score": 0.0,
+      "quality_score": 0.0
+    },
+    {
+      "id": "74a48bc31ff0d6b2",
+      "title": "Medium",
+      "url": "https://medium.com/autonomous-agents/rag-does-not-reduce-hallucinations-in-llms-math-deep-dive-900107671e10",
+      "source_type": "article",
+      "authors": [],
+      "published_date": null,
+      "content": "RAGs Do Not Reduce Hallucinations in LLMs \u2014 A Math Deep Dive\nToo much marketing cool-aid has been spent on stating that RAG avoids or reduces hallucinations in LLMs. This is not true at all.\nRetrieval-Augmented Generation (RAG) models represent a sophisticated intersection of information retrieval and generative machine learning techniques, designed to enhance the text generation process by leveraging a vast repository of information. Despite their advanced architecture, these models inherently struggle to eliminate hallucinations \u2014 misleading or factually incorrect generated content. The root causes of this limitation can be traced back to the intricate mathematical formulations and assumptions embedded within the RAG framework.\nIf only you could have fixed hallucinations of a pre-trained LLM through contextually relevant prompts. It would have been a solved problem by now! Contextual relevance (RAGs) improve domain specificity, not hallucination!\nThe only place hallucinations can be fixed is within the LLM.\nRetrieval is based on semantic similarity and maximizing log likelihoods and is not a mathematical framework for formal verification of facts. The only purpose of RAG is to provide additional context that is proprietary or nuanced to enable \u201crelevance\u201d beyond the general information that LLMs are trained on.\nRead more about why hallucinations occur in LLMs in my previous blog: [Mathematically Evaluating Hallucinations in LLMs](/autonomous-agents/mathematically-evaluating-hallucinations-in-llms-like-chatgpt-e9db339b39c2)\nHow is RAG Used?\nRAG is merges the capabilities of pre-trained language models with information retrieval to enhance the generation of text. It is designed to leverage a vast corpus of text data, enabling it to produce responses that are not only relevant but also rich in detail and contextually accurate. Here\u2019s an overview of how RAG operates:\n- Preprocessing: Indexes a large dataset as a knowledge base.\n- Query Formation: Converts queries into semantic vectors for retrieval.\n- Document Retrieval: Finds relevant documents using nearest neighbor search algorithms.\n- Context Integration: Augments query with retrieved documents for enriched context.\n- Text Generation: Generates informed responses with a pre-trained language model.\nAdding contextual relevance through RAG does not reduce hallucinations in LLMs (As you cannot influence model drifts though this). It only increases your semantic relevance scores! This is not the same as hallucination of the system.\nContextual relevance does not have any bearing on the LLM\u2019s reasoning ability or the constraints on the probabilistic selection strategy at the logit layer. Hallucination is a problem of reasoning and not relevance! Any amount of relevant text fed through RAG to a machine will retain the original perplexity and entropy in the system to hallucinate independent of the text.\nPeople also use RAGs for fine-tuning the the LLMs to induce data drifts. Even here, what you are increasing is the vocabulary, knowledge and context of the system to include your proprietory data. This is the major problem of claiming that RAGs reduces hallucination. It does not. It increases contextual relevance of the domain.\nContextual relevance is a small part of the reasons for LLMs hallucinating. The largest part is it\u2019s reasoning capabilities.\nMathematical Formulations in RAG Models\nRAG models integrate two critical phases: retrieval of relevant information followed by generation of text based on this information. Each phase is governed by complex mathematical constructs that, while optimizing for semantic relevance and coherence, do not inherently safeguard against the generation of hallucinations.\nDetailed Retrieval Phase\nThe retrieval phase in a RAG model is not merely about fetching relevant documents; it is about understanding the query in a high-dimensional space and finding the nearest neighbors in terms of semantic similarity based on cosine similarity or other related metrics. Here is a cosine similarity measure:\nThe process of can be mathematically represented by embedding the query q and documents {Di} into vectors in a latent space:\nThe retrieval function R can then be defined as:\nwhere cos denotes the cosine similarity between the query and document vectors. This process relies on dimensionality reduction techniques and similarity metrics that, while effective, introduce an initial layer of approximation and potential source of error.\nGenerative Phase Modeling\nUpon retrieving relevant documents, the generative phase employs a conditional language model to produce text. This phase can be mathematically represented as a sequence of conditional probabilities, optimized to generate a sequence Y=(y1,\u2026,ym) given the query q and retrieved documents D\u2217:\nwhere y<i represents all tokens preceding yi, and \u0398 the parameters of the model. The objective is to maximize the log-likelihood of the generated sequence:\nHowever, this optimization does not inherently account for the veracity of each y_i against external truths (this formal verification is a different process than RAG), laying the groundwork for hallucinations.\nMathematical Insights into Hallucination Phenomena\nHallucinations in RAG models stem from multiple deep-rooted mathematical challenges inherent in both the retrieval and generative processes.\nRetrieval Imperfections and Semantic Ambiguity\nThe initial challenge arises from the retrieval phase\u2019s reliance on semantic similarity, which is quantified by inner product spaces or cosine similarities. This metric, while capturing semantic closeness, does not differentiate between factually accurate and inaccurate information. The retrieved documents D\u2217 might thus contain misleading information, mathematically represented as a misalignment in the vector space:\nwhere Accuracy(d) quantifies the factual correctness of document d. A negative \u0394accuracy signifies the retrieval of less accurate documents over more accurate ones.\nLimitations in Conditional Probability Modeling\nThe generation phase is predicated on conditional probability distributions that are inherently complex to model accurately. The optimization process, typically involving gradient descent, seeks to maximize the likelihood of generating a coherent response given the retrieved documents. However, this optimization does not explicitly account for the factual accuracy of each token generated, leading to:\nThe absence of a direct mechanism to validate each piece of generated information against a factual benchmark or external knowledge base means that the model can \u201challucinate\u201d information that fits well within the generated context but is factually incorrect.\nGenerative Phase and the Complexity of Factual Consistency\nThe generative phase compounds the issue by optimizing for sequence likelihood without direct factual validation. The absence of a mathematical constraint to enforce factual accuracy allows for the propagation and generation of inaccuracies:\nwhere F denotes a set of factually correct tokens and \u03c4 a threshold probability that ensures factual consistency. The lack of such constraints in conventional RAG models leads to the generation of hallucinated content.\nTo integrate a factual verification process necessitates a substantial enhancement of the model\u2019s architecture, incorporating:\nwhere I_fact is an indicator function assessing the factual accuracy of yj against a set of facts F, and \u03bb balances the contribution of semantic coherence and factual accuracy. This is computationally very expensive.\nOverfitting and Data Bias\nThe mathematical optimization techniques employed in training RAG models, such as gradient descent, can exacerbate the model\u2019s tendency to overfit to the training data or inherit its biases. This is particularly problematic when the training data contains inaccuracies, misleading the model to learn and replicate these inaccuracies during generation:\nwhere L represents the loss function, D the training dataset, and F a factual accuracy component not typically included in standard formulations.\nMathematical Complexity in Integrating Factual Consistency\nIntegrating factual consistency into the RAG framework introduces significant mathematical complexity. It requires not only an accurate representation of factual information but also a computationally feasible method to compare generated content against this factual representation continuously. This integration could hypothetically be modeled as an optimization problem with constraints on factual accuracy, significantly increasing the computational burden and complexity of the model.\nProposal: Theoretical Advances\nEliminating hallucinations through RAG is impossible. Meanwhile, I propose addressing hallucinations through a multifaceted approach, integrating advancements in both the retrieval and generative phases, underpinned by rigorous mathematical formulations.\nNote that this is computational expensive and almost intractable as the size of corpus and the number of facts that needs to checked is varied and abstract.\nEnhanced Document Retrieval with Factual Verification\nImproving document retrieval requires a balance between semantic relevance and factual accuracy. A potential approach involves modifying the retrieval function to include a factual verification component:\nwhere verif(q,d,F) quantifies the alignment of document d with a set of verified facts F, and \u03b1,\u03b2 are parameters that balance semantic similarity with factual accuracy.\nProbabilistic Generative Modeling with Explicit Fact Checking\nIncorporating explicit fact-checking into the generative model involves augmenting the conditional probability with a term that penalizes factual discrepancies directly:\nwhere \u03b4 is a penalty parameter for factual inaccuracies, and I is an indicator function identifying tokens yi that contradict the set of verified facts F_Y relevant to the generated content Y.\nIntegrating External Knowledge Bases\nA robust approach to mitigating hallucinations involves the integration of external knowledge bases directly into the model\u2019s architecture, providing a real-time benchmark for factual accuracy:\nwhere \u03a8 is a function measuring the discrepancy between the generated content and the external knowledge base K, and \u03bb modulates the influence of factual accuracy on the overall loss function.\nFinal Thoughts\nThrough the lens of advanced mathematical formulations and theoretical insights, it becomes evident that the challenge of hallucinations in RAG models is both complex and multifaceted. Addressing this issue necessitates a concerted effort to refine the mathematical frameworks governing both retrieval and generation processes, incorporating sophisticated mechanisms for factual verification and the integration of external knowledge.\nSince RAGs are being subsumed into LLMs, the best place to address hallucinations are within the LLMs in itself.",
+      "retrieved_at": null,
+      "search_query": "Does RAG reduce hallucinations in LLMs?",
+      "relevance_score": 0.0,
+      "quality_score": 0.0
+    },
+    {
+      "id": "05358ff97f8a5aeb",
+      "title": "Correcting Hallucinations in Large Language Models",
+      "url": "https://www.vectara.com/blog/correcting-hallucinations-in-large-language-models",
+      "source_type": "article",
+      "authors": [],
+      "published_date": null,
+      "content": "Correcting Hallucinations in Large Language Models\nIn this blog post, we share the results of our initial experiments aimed at correcting hallucinations generated by Large Language Models (LLMs). Our focus is on the open-book setting, which encompasses tasks such as summarization and Retrieval-Augmented Generation (RAG).\n8-minute read time\n[Overview](#overview)\nIn the context of LLMs, hallucination refers to the phenomenon where the model makes up information when responding to a user\u2019s prompt or question. While the exact causes of hallucinations remain unclear and are the subject of ongoing research, these occurrences can have significant real-world [consequences](https://www.nbcnews.com/tech/tech-news/chatgpt-cited-bogus-cases-new-york-federal-court-filing-rcna86843), especially in enterprise applications and even more so with Agentic RAG.\nAs we mention in our [hallucination detection blog post](https://vectara.com/blog/cut-the-bull-detecting-hallucinations-in-large-language-models/), one of the most effective methods for reducing hallucinations is grounding LLM responses in a set of provided documents (also called references). In other words Augmenting Generation with Retrieval aka RAG. However, even RAG is not the catch-all solution to the hallucination problem, and as [Vectara\u2019s Hallucination Leaderboard](https://github.com/vectara/hallucination-leaderboard) shows modern LLMs hallucinate anywhere from 1% to nearly 30% of the time even when generating outputs based on reference sources, called open book generation.\nVectara has historically provided the [Hughes Hallucination Evaluation Model (HHEM)](https://huggingface.co/vectara/hallucination_evaluation_model) as a detector of hallucinations for the open book generation use case. Today, we are excited to share our early findings on the next frontier: hallucination correction.\n[The Hallucination Correction Model](#the-hallucination-correction-model)\nWe have been exploring a specific technique for hallucination correction called \u201cpost editing\u201d, in which the model corrects hallucinations after a summary has been generated.\nHere\u2019s how it works. The Hallucination Correction Model (aka HCM) receives the reference documents and the generated response to the user query, and generates a \u201ccorrected\u201d response, as shown in Figure 1 below:\nNote that we do not use the query as input to HCM. Furthermore, HCM is not generating a whole new response, instead, it will attempt to only fix those parts of the original response that are hallucinated, and leave the other parts and the overall response structure intact.\nBecause our model functions as a post-editing tool, it can be added on as a post-processing stage to any existing RAG (or other open-book generation) pipeline without requiring modifications to other components.\n[Hallucination Correction Model Performance](#hallucination-correction-model-performance)\nWe report the performance of HCM on a few different datasets and quantify how well it\u2019s able to correct hallucinations from several different open-weight and commercially available LLMs.\nWe also report a brief error analysis and some interesting failure modes of the model.\n[HHEM Leaderboard Benchmark](#hhem-leaderboard-benchmark)\nVectara maintains a hallucination evaluation [leaderboard](https://huggingface.co/spaces/vectara/leaderboard), which serves as our first data source for evaluating HCM. We select a diverse range of models from the leaderboard and run their generated summaries through HCM to correct any hallucinations, as described above. To assess the effectiveness of our corrections, we use HHEM (specifically HHEM-2.1), to measure the Factuality Rate (FR, defined as the inverse of the hallucination rate, i.e., factuality_rate = 1.0 \u2013 hallucination_rate) both before and after the corrections. The results of this evaluation are presented in Figure 2.\nAs shown in the plot, the summaries corrected by HCM demonstrate a significant improvement in FR. The enhancements are especially notable for models that initially had low FR. Even for models with higher original FR, HCM still provides a boost in scores.\nTo measure whether our model introduces unnecessary alterations to the original response during the correction process, we calculate both the [ROUGE](<https://en.wikipedia.org/wiki/ROUGE_(metric)>) score and [BERTScore](https://arxiv.org/abs/1904.09675) between the original and corrected responses. These metrics are a measure of lexical and semantic similarity respectively and range from 0 to 1, where a score of 1 indicates a perfect match, meaning HCM made no changes, and a score of 0 indicates a complete mismatch.\u00a0\nFor our purposes, we want to aim for high scores, as we want HCM to minimize changes to the original summaries. This is because the assumption we make is that hallucinations make up only smaller portions of the original summary. Figure 3 illustrates the ROUGE and BERTScore on the HHEM Leaderboard for different models.\nWe see that ROUGE and BERTScore are both high for most models, which supports the fact that HCM is not changing the majority of the summary, keeping it intact.\n[FAVABENCH and NonFacts Datasets Benchmark](#favabench-and-nonfacts-datasets-benchmark)\nWe also compare our model\u2019s performance on two other publicly available datasets [FAVABENCH](https://arxiv.org/abs/2401.06855) and [NonFactS](https://aclanthology.org/2023.findings-acl.400.pdf). One point to note here is that the hallucinations in these datasets are not natural hallucinations produced by LLMs, instead, these datasets are constructed using artificial techniques to inject hallucinations. For example, FAVABENCH prompts ChatGPT to insert errors from different taxonomies and NonFactS uses a fine-tuned BART-base model to inject hallucinations by passing incomplete information during inference. Therefore, these hallucinations do not completely match the distribution of real-world hallucinations.\nWe asked HCM to correct the hallucinated summaries in these datasets and the FR of the corrected answers are plotted in Figure 4.\nAs we can see, HCM shows strong capability in correcting nonfactual information.\nFigure 5 plots the ROUGE and BERTScore scores between original and corrected summaries for FAVABENCH and NonFactS dataset. As previously noted, the hallucinations in these datasets are more \u201cartificial\u201d and therefore easier to detect, which allows HCM to make more substantial changes to the original responses. Consequently, this results in lower ROUGE and BERTScore values, as we can see in Figure 5.\n[RAGTruth Dataset](#ragtruth-dataset)\nWe also evaluate HCM\u2019s performance on [RAGTruth](https://arxiv.org/abs/2401.00396), a publicly available human-annotated hallucination dataset. RAGTruth is arguably the hardest hallucination dataset to detect and correct for.\u00a0\nUnlike some other datasets, like FAVABENCH and NonFactS, which use sophisticated techniques to inject hallucinations into the dataset, RAGTruth contains hallucinations that are naturally generated by LLMs, thus they tend to be subtle and more representative of real-world hallucinations generated by LLMs. Thus hallucination correction techniques that improve performance on this benchmark should indicate generalizable FR gains.\nThe performance comparison with and without our HCM is plotted in Figure 6. ROUGE and BERTScore scores for individual models in the dataset are plotted in Figure 7.\nFor this analysis, we utilized the entire test split of the RAGTruth dataset for the summarization task.\nIt is clear from Figures 6 and 7 that there is a notable improvement in the HHEM factuality rate of post-edited responses originally generated by Mistral-7B-Instruct and Llama-2-Chat (7B, 13B, and 70B).\nGPT models, which typically exhibit a high factuality rate by default, continued to demonstrate strong performance with the application of HCM indicating that the model is able to let factual summaries pass through unchanged.\n[Analysis](#analysis)\nIn this section we show some examples where HCM does not succeed in correcting hallucinations, and try to analyze the performance in different scenarios.\nOne particular scenario where our model fails to achieve a high FR (see Figure 1) is when correcting answers generated by the Falcon-7B-Instruct model on the HHEM Leaderboard. Manual analysis reveals that Falcon-7B-Instruct often deviates from the instructions it is given, and accesses its knowledge to add information while generating answers. This does not necessarily mean that the extra information it adds is hallucinated per se and we usually notice it being grounded in the real world, but those parts of information are not directly inferred from the provided documents.\nFrom the perspective of retrieval augmented generation, where you want your answers to only depend on the supporting documents, this is a form of hallucination. Table 1 below shows a few examples of such cases.\nTable 1: Analysis of Falcon-7B-Instruct on HHEM Leaderboard.\nAs is clearly evident, Falcon-7B-Instruct often generates information that is not directly supported by the provided documents. These particular examples turn out to be problematic because our HCM aims to make the most crucial minimal changes to edit non-factual pieces of information that aren\u2019t directly supported by the provided documents while maintaining the overall structure of the original answer. This, however, means that the model isn\u2019t accustomed to making larger changes to summaries, such as deleting or adding large pieces of text, and thus fails to correct the outputs generated by the Falcon-7B-Instruct model.\n[Conclusion](#conclusion)\nIn this blog, we presented our Hallucination Correction Model (HCM) and evaluated its performance on several public benchmarks as well as our [HHEM leaderboard](https://huggingface.co/spaces/vectara/leaderboard).\u00a0\nOur analysis revealed a significant improvement in the factuality rate of the generated summaries across all datasets and leading LLMs. Additionally, we examined some edge cases where our model encounters challenges and identified several shortcomings that we intend to address in future iterations.\nReducing hallucinations in LLM, especially in enterprise RAG pipelines, remains an important area of research and we consider HCM a substantial step towards our goal of reducing hallucinations.\nAs we work to further improve our offering in this field, we are excited to share these initial results with the community.\n[Appendix](#appendix)\nWe randomly selected ~100 examples with original and corrected summaries along with references from our evaluation datasets and have made them available [on HuggingFace.](https://huggingface.co/datasets/sulekz/hcm-examples-aug-2024)",
+      "retrieved_at": null,
+      "search_query": "Does RAG reduce hallucinations in LLMs? benchmark",
+      "relevance_score": 0.0,
+      "quality_score": 0.0
+    },
+    {
+      "id": "e9f8e636bea792ec",
+      "title": "Reducing hallucination in structured outputs via Retrieval- ...",
+      "url": "https://arxiv.org/html/2404.08189v1",
+      "source_type": "article",
+      "authors": [],
+      "published_date": null,
+      "content": "Reducing hallucination in structured outputs via Retrieval-Augmented Generation\nAbstract\nA current limitation of Generative AI (GenAI) is its propensity to hallucinate. While Large Language Models (LLM) have taken the world by storm, without eliminating or at least reducing hallucination, real-world GenAI systems will likely continue to face challenges in user adoption. In the process of deploying an enterprise application that produces workflows from natural language requirements, we devised a system leveraging Retrieval-Augmented Generation (RAG) to improve the quality of the structured output that represents such workflows. Thanks to our implementation of RAG, our proposed system significantly reduces hallucination and allows the generalization of our LLM to out-of-domain settings. In addition, we show that using a small, well-trained retriever can reduce the size of the accompanying LLM at no loss in performance, thereby making deployments of LLM-based systems less resource-intensive.\n1 Introduction\nWith the advent of Large Language Models (LLMs), structured output tasks such as converting natural language to code or to SQL have become commercially viable. A similar application is translating a natural language requirement to a workflow, a series of steps along with logic elements specifying their relationships. These workflows encapsulate processes that are executed automatically upon certain conditions, thereby increasing employee productivity. While enterprise systems offer such functionality to automate repetitive work and standardize processes, the barrier to entry is high, as building workflows requires specialized knowledge. Generative AI (GenAI) can lower this barrier since novice users can specify in natural language what they want their workflows to execute.\nHowever, as with any GenAI application, using LLMs naively can produce untrustworthy outputs. Such is the public concern for LLMs producing hallucinations that the Cambridge Dictionary chose hallucinate as its Word of the Year in 2023 [Cambridge (2023)](#bib.bib1). Retrieval-Augmented Generation (RAG) is a well-known method that can reduce hallucination and improve output quality, especially when generating the correct output requires access to external knowledge sources [Gao et\u00a0al. (2024)](#bib.bib8).\nIn this work, we describe how, in the process of building a commercial application that converts natural language to workflows, we employ RAG to improve the trustworthiness of the output by reducing hallucination. Workflows are represented as JSON documents where each step is a JSON object. Figure [1](#S1.F1) shows an example of a text requirement and its associated JSON document. For simplicity, we include only the basic properties needed to identify a step along with properties indicating the relationship between steps. Besides the workflow steps, there may also be a trigger step that determines when the workflow should start, and sometimes this trigger requires a database table name. Hallucination in this task means generating properties such as steps or tables that do not exist.\nWhile fine-tuning a sufficiently large LLM can produce reasonably good workflows, the model may hallucinate, particularly if the natural language input is out-of-distribution. As the nature of enterprise users requires them to customize their applications, in this case by adding their own type of workflow steps, a commercial GenAI application needs to minimize the out-of-distribution mismatch. While one could fine-tune the LLM per enterprise, this may be prohibitively expensive due to the high infrastructure costs of fine-tuning LLMs. Another consideration when deploying LLMs is their footprint, making it preferable to deploy the smallest LLM that can perform the task.\nOur contributions are the following:\n- \u2022 \nWe provide an application of RAG in workflow generation, a structured output task.\n- \u2022 \nWe show that using RAG reduces hallucination and improves results.\n- \u2022 \nWe demonstrate that RAG allows deploying a smaller LLM while using a very small retriever model, at no loss in performance.\n2 Related Work\nRetrieval-Augmented Generation is a common approach to limit generation of false or outdated information in classical NLP tasks such as question answering and summarization ([Lewis et\u00a0al., 2020](#bib.bib19); [Izacard and Grave, 2021](#bib.bib12); [Shuster et\u00a0al., 2021](#bib.bib31)). In the GenAI era, it refers to a process where relevant information from specific data sources is retrieved prior to generating text; the generation is then based on this retrieved information [Gao et\u00a0al. (2024)](#bib.bib8). Our work differs from standard RAG as we apply it to a structured output task. Instead of retrieving facts, we retrieve JSON objects that could be part of the JSON output document. Providing plausible JSON objects to the LLM before generation increases the likelihood that the output JSON properties exist and that the generated JSON can be executed.\nA crucial ingredient of RAG is the retriever since its output will be part of the LLM input. Compared to classical methods such as TF-IDF or BM25 that use lexical information, Dense Retrieval has been shown to be more effective as it maps the semantics to a multidimensional space where both queries and documents are represented ([Reimers and Gurevych, 2019](#bib.bib29); [Gao et\u00a0al., 2021](#bib.bib7); [Karpukhin et\u00a0al., 2020](#bib.bib15); [Xiong et\u00a0al., 2020](#bib.bib34)). These retrievers are often used in open-domain question answering systems ([Guu et\u00a0al., 2020](#bib.bib9); [Lee et\u00a0al., 2019](#bib.bib17)), where both queries and documents are unstructured data and thus share the same semantic space. In our case, the queries are unstructured (natural language) and the documents (JSON objects) are structured. Our retrieval training is similar to Structure Aware DeNse ReTrievAl (SANTA), which proposes a training method to align the semantics between code and text [Li et\u00a0al. (2023b)](#bib.bib21).\nGenerating structured data falls within the realm of Structured Output tasks, which consist of generating a valid structured output from natural language, such as text-to-code, text-to-SQL ([Zhong et\u00a0al., 2017](#bib.bib36); [Yu et\u00a0al., 2018](#bib.bib35); [Wang et\u00a0al., 2020](#bib.bib32)) or if-then program synthesis ([Quirk et\u00a0al., 2015](#bib.bib28); [Liu et\u00a0al., 2016](#bib.bib22); [Dalal and Galbraith, 2020](#bib.bib4)). They are challenging as they not only require generating output that can be parsed, but also entities or field values that exist in a given lexicon; otherwise the resulting output cannot be interpreted or compiled. For simple database schemas or small lexicons, this extra information can be included in the prompt. However, in our task the available pool of steps that can be part of a workflow is potentially very large and customizable per deployment, thereby making in-context learning impractical.\nWith the arrival of LLMs, these tasks have become more accessible. In particular, Code LLMs enable developers to write code faster by providing instructions to the LLM to generate code snippets ([Chen et\u00a0al., 2021](#bib.bib3); [Nijkamp et\u00a0al., 2022](#bib.bib27); [Li et\u00a0al., 2023a](#bib.bib20); [Roziere et\u00a0al., 2023](#bib.bib30)). These models, trained on large datasets of source code [Kocetkov et\u00a0al. (2022)](#bib.bib16), have acquired broad knowledge of many programming languages and have been shown to perform better at tasks that necessitate reasoning [Madaan et\u00a0al. (2022)](#bib.bib24). Since the JSON schema to represent workflows is domain-specific, we cannot use these models off-the-shelf. While fine-tuning them on a small dataset increases the quality of results, extra steps are required to reduce hallucination and support out-of-domain queries.\nLastly, an alternative and complementary technique to reduce hallucination with LLMs is Guided Generation using tools such as Outlines [Willard and Louf (2023)](#bib.bib33). A sufficiently expressive context-free grammar could ensure that the steps generated by the model exist, but it does not provide extra knowledge as to which steps the flow should include given the natural language query.\n3 Methodology\nFigure [2](#S1.F2) depicts the high-level architecture of our RAG system. During initialization, indices of steps and tables are created using the retriever. When a user submits a request, the retriever is called to suggest steps and tables. The suggestions are then appended to the user query to form the LLM prompt. The LLM is then called to generate the workflow in the JSON format via greedy decoding.\nTo build our system, we first train a retriever encoder to align natural language with JSON objects. We then train an LLM in a RAG fashion by including the retriever\u2019s output in its prompt.\n3.1 Retriever training\nWe expect the LLM to learn to construct JSON documents including the relationship between workflow steps, given sufficient examples. The risk of hallucination comes mainly from the step names since there are tens of thousands of possible steps and every customer can add their own steps if the default set does not meet their needs. In addition, as some trigger steps require database table names as a property, these names can also be hallucinated. We therefore require the retriever to map natural language to existing step and database table names.\nWe choose to fine-tune a retriever model for two reasons: to improve the mapping between text and JSON objects, and to create a better representation of the domain of our application. While there exist a myriad of open-source sentence encoders ([Reimers and Gurevych, 2019](#bib.bib29); [Ni et\u00a0al., 2022](#bib.bib26)), they have been trained in a setting where both queries and documents are in the same natural language semantic space. But in our case, the query or workflow requirement is unstructured while the JSON objects are structured data. Consistent with the results reported by [Li et\u00a0al. (2023b)](#bib.bib21), who search code snippets based on text, fine-tuning improves the retrieval results greatly. Similarly, fine-tuning a model using our domain-specific data allows the retriever to learn the nuances and technicalities of the text and JSON that are particular to our setting.\nWe use a siamese transformer encoder with mean pooling similar to [Reimers and Gurevych (2019)](#bib.bib29) to encode both the user query and the step or table JSON object into fixed-length vectors. We include a normalization layer in our model so that the resulting embeddings have a norm of 1. We generate three embeddings , , :\n|  |  |  | (1) | \nwhere , , are the user query, step, and table respectively. Retriever can be decomposed as:\n|  |  |  | (2) | \nThe retriever model is trained on pairs of user queries and corresponding steps or tables. Since table names are used only in certain examples depending on the type of trigger, a query can be mapped to zero tables. For instance, the workflow in Figure [1](#S1.F1) has four steps, forming four positive training pairs, each pair consisting of the same query and one of the steps in the flow. As the daily trigger step does not need a table name, the query is mapped to an empty list of tables.\nWe also construct negative training pairs by sampling steps or tables that are not relevant to the user query. We experiment with three different negative sampling strategies: random, BM25-based, and ANCE-based [Xiong et\u00a0al. (2020)](#bib.bib34).\nThe retriever is trained using a contrastive loss [Hadsell et\u00a0al. (2006)](#bib.bib10) to minimize the distance between positive pairs () and negative pairs (). Given the cosine similarity between the query and step (or table) vectors, and cosine distance , we define contrastive loss  as:\n|  |  |  | (3) | \nDuring initialization, we build an index of steps and tables using FAISS [Douze et\u00a0al. (2024)](#bib.bib6). When a user submits a natural language query, we embed the incoming query using our retriever and use cosine similarity to retrieve the max  steps and tables associated with this requirement.\n3.2 LLM training\nContrary to end-to-end RAG systems such as [Lewis et\u00a0al. (2020)](#bib.bib19), we opted to train both the retriever and LLM separately, for simplicity. We use the trained retriever to augment our dataset with suggested step and table names for each example. We then proceed with standard LLM supervised fine-tuning.\nBy inserting the retriever\u2019s output in JSON format into the LLM input, we effectively make this structured output task easier as the LLM can copy the relevant JSON objects during generation. Figure [3](#S3.F3) shows an example of a training example. Every line except the last four make up the LLM prompt. The suggested tables and steps come before the user query and are underlined in the figure. We exclude the most frequent steps from these suggestions as we expect the LLM to memorize them. Also, in every LLM training example, we assume the retriever has 100% recall: the steps and table required to build the structured output are always in the suggestions, except for the most frequent steps.\nAs we are showing the LLM thousands of examples during training, we did not find it necessary to experiment with complicated or verbose prompts: we used a short and simple format, similar to Figure [3](#S3.F3), to reduce the number of input tokens while making it clear that this is a structured output task. As shown in section [5.2](#S5.SS2), this approach yielded good performance.\n4 Experiments\nAs the task we are interested in is part of a commercial enterprise system, we had to devise our own datasets as well as evaluation metrics.\n4.1 Datasets\nFrom internal deployments of our enterprise platform, we extracted around 4,000 examples of deployed workflows and asked annotators to write natural language requirements for them. In addition, using deterministic rules, we created around 1,000 samples having simple and few steps in order to teach the model to handle input where the user is incrementally building their workflow. To have an unbiased estimate of the quality of results once the system is deployed, we asked expert users to simulate interacting with the system through a simple user interface where they typed their requirement. We used these interactions and the expected JSON documents to create an additional dataset split, named \"Human Eval.\" Our final metrics are based on this split instead of the \"Test\" split, due to its higher quality and more realistic input. Table [1](#S4.T1) shows statistics for all of our in-domain splits. Not all samples require triggers, and a small subset require the model to generate tables.\n| Split | Size | # Triggers | # Tables | \n|---|---|---|---|\n| Train | 2867 | 823 | 556 | \n| Dev | 318 | 77 | 44 | \n| Test | 798 | 247 | 163 | \n| Human Eval | 157 | 99 | 60 | \nA drawback of our data labeling approach is that these internal datasets are mostly in the IT domain, whereas our RAG system can be deployed in diverse domains such as HR and finance. Without assessing the quality of the system in out-of-distribution settings, we cannot be confident that the system will behave as expected. We therefore asked annotators to label five other splits, which come from other deployments of our enterprise platform. These are real workflows that have been created by real users.\nTable [2](#S4.T2) includes statistics for these out-of-domain splits. A measure of how different they are from our training data is the % of steps that are not in the set of steps in the \"Train\" split. This discrepancy ranges from less than 10% to more than 70%, highlighting the need to use a retriever and to customize the indices per deployment.\n| Split | Size | # Triggers | # Tables | % Steps not | \n|---|---|---|---|---|\n|  |  |  |  | in Train | \n| OOD1 | 146 | 133 | 47 | 49% | \n| OOD2 | 162 | 111 | 21 | 76% | \n| OOD3 | 429 | 226 | 114 | 34% | \n| OOD4 | 42 | 25 | 11 | 33% | \n| OOD5 | 353 | 271 | 26 | 7% | \nTo train the retriever encoder, we create pair examples out of the 4,000 extracted and 1,000 deterministically generated samples, resulting in around 15,000 pairs in the step names dataset and 1,500 in the table names dataset. The quality of this encoder is evaluated on the \"Human Eval\" split described above.\n4.2 Metrics\nWe evaluate the entire RAG system using three metrics, which can all range from 0 to 1:\n- \u2022 \nTrigger Exact Match (EM) verifies whether the generated JSON trigger is exactly the same as the ground-truth, including the table name if this trigger requires it.\n- \u2022 \nBag of Steps (BofS) measures the overlap between the generated JSON steps and the ground-truth steps in an order-agnostic fashion, akin to a bag-of-words approach.\n- \u2022 \nHallucinated Tables (HT) and Hallucinated Steps (HS) measure the % of generated tables/steps that do not exist per workflow, indicating that they were invented by the LLM. This is the only metric where lower is better.\nTo evaluate the retriever, we use Recall@15 for steps and Recall@10 for tables. That is, given a natural language requirement, we retrieve the top steps/tables from their respective indices and verify whether they cover the set of steps and the table, if required, included in the JSON document representing the workflow.\n4.3 Models\nAs this is a production system, we have a trade-off between model size and performance for both the LLM and the retriever encoder.\nWe fine-tune models of different sizes to measure the impact of model size on the final metrics. As StarCoderBase [Li et\u00a0al. (2023a)](#bib.bib20) has been pre-trained on JSON in addition to many programming languages and comes in different sizes, we fine-tune its 1B, 3B, 7B and 15.5B variants. Given our infrastructure constraints, we could deploy an LLM of at most 7B parameters. Thus we also fine-tune other pretrained LLMs of this size: CodeLlama-7B [Roziere et\u00a0al. (2023)](#bib.bib30) and Mistral-7B-v0.1 [Jiang et\u00a0al. (2023)](#bib.bib13). All the LLMs were fine-tuned using the same datasets and hyperparameters.\nWe use all-mpnet-base-v211\n              1\n              \n              \n              \n            https://huggingface.co/sentence-transformers/all-mpnet-base-v2 as the base retriever model. As it has only 110M parameters, it is suitable for deployment. We compare our fine-tuned model against different sizes of off-the-shelf GTR-T5 models [Ni et\u00a0al. (2022)](#bib.bib26) to see whether larger encoders impact the performance.\nPlease see Appendix [A](#A1) for training details for both the LLM and the retriever encoder.\n5 Results\n5.1 Retriever encoder\nTable [3](#S5.T3) shows the results of retrieval on the \"Human Eval\" split for both steps and tables. Scaling the size of the off-the-shelf encoders, as we did with GTR-T5, does not yield significant improvements on both retrieval metrics. A similar observation was made by [Neelakantan et\u00a0al. (2022)](#bib.bib25) for code retrieval. What was crucial to significantly improve the performance was fine-tuning the encoder.\n| Model (# Params) | Step | Table | \n|---|---|---|\n|  | Recall@15 | Recall@10 | \n| gtr-t5-base (110M) | 0.505 | 0.489 | \n| gtr-t5-large (355M) | 0.575 | 0.511 | \n| gtr-t5-xl (1.24B) | 0.579 | 0.489 | \n| gtr-t5-xxl (4.8B) | 0.561 | 0.489 | \n| all-mpnet-base-v2 (110M) | 0.425 | 0.170 | \n| + Random | 0.640 | 0.752 | \n| + BM25 | 0.537 | 0.586 | \n| + ANCE | 0.556 | 0.699 | \n| + All | 0.743 | 0.766 | \nDue to deployment considerations, we fine-tune the smallest encoders (110M parameters), and found that all-mpnet-base-v2 yielded the best performance after fine-tuning with all negative sampling strategies.\n|  | Trigger | Bag of | Hallucinated | Hallucinated | \n|---|---|---|---|---|\n| Model | EM | Steps | Steps | Tables | \n| No Retriever |  |  |  |  | \n| StarCoderBase-1B | 0.580 | 0.645 | 0.157 | 0.192 | \n| StarCoderBase-3B | 0.551 | 0.648 | 0.140 | 0.214 | \n| StarCoderBase-7B | 0.547 | 0.669 | 0.137 | 0.206 | \n| StarCoderBase (15.5B) | 0.632 | 0.662 | 0.160 | 0.194 | \n| With Retriever |  |  |  |  | \n| StarCoderBase-1B | 0.591 | 0.619 | 0.072 | 0.044 | \n| StarCoderBase-3B | 0.615 | 0.641 | 0.017 | 0.030 | \n| StarCoderBase-7B | 0.664 | 0.672 | 0.019 | 0.042 | \n| StarCoderBase (15.5B) | 0.667 | 0.667 | 0.040 | 0.016 | \n| CodeLlama-7B | 0.623 | 0.617 | 0.039 | 0.108 | \n| Mistral-7B-v0.1 | 0.596 | 0.617 | 0.049 | 0.045 | \n5.2 Retrieval-Augmented Generation\nOur main objective is to reduce hallucination while keeping the overall performance high given our infrastructure constraints. Table [4](#S5.T4) shows that without a retriever (only LLM fine-tuning), the % of hallucinated steps and tables can be as high as 21% on the \"Human Eval\" split. Using a retriever, this decreases to less than 7.5% for steps and less than 4.5% for tables with all StarCoderBase LLMs. All models produce valid JSON documents following the expected schema, thanks to fine-tuning.\nWithout a retriever, scaling the size of the StarCoderBase models improves the Bag of Steps and Trigger Exact Match metrics, albeit unevenly. Scaling also helps with RAG, but we observe more consistent improvements. This suggests that larger LLMs can better copy and paste retrieved steps and tables during generation.\nThe smallest RAG fine-tuned model (1B) hallucinates significantly more than its larger counterparts. Among the other three variants, the 7B version gives us the best trade-off, as the performance difference between 7B and 15.5B is marginal. Another observation is that the 3B version trained with RAG is competitive even with the 15.5B version without RAG on the Trigger EM and Bag of Steps metrics, while keeping hallucination low. This is a key lesson as we could deploy a 3B RAG fine-tuned model if we had more limited infrastructure.\nLastly, we compare the RAG fine-tuned StarCoderBase-7B to fine-tuning more recent LLMs of the same size. Despite also fine-tuning them with RAG, CodeLlama-7B and Mistral-7B-v0.1 produce worse results across all metrics, even compared to the smaller StarCoderBase-3B. We suspect that pre-training on large amounts of natural language data may be detrimental to our task.\n5.3 OOD evaluation\nWe want our approach to perform well on OOD scenarios without further fine-tuning the retriever or the LLM. Table [5](#S5.T5) assesses the performance of our chosen RAG fine-tuned StarCoderBase-7B model on the five OOD splits described by Table [2](#S4.T2).\n| Split | Trigger EM | BofS | HS | HT | \n|---|---|---|---|---|\n| OOD1 | 0.662 | 0.619 | 0.063 | 0.051 | \n| OOD2 | 0.645 | 0.612 | 0.020 | 0.151 | \n| OOD3 | 0.562 | 0.743 | 0.014 | 0.033 | \n| OOD4 | 0.400 | 0.671 | 0.011 | 0.154 | \n| OOD5 | 0.774 | 0.770 | 0.005 | 0.063 | \n| Avg. | 0.647 | 0.714 | 0.018 | 0.066 | \n| No RAG Avg. | 0.544 | 0.629 | 0.020 | 0.428 | \n| Human Eval | 0.664 | 0.672 | 0.019 | 0.042 | \nWe observe that on average, thanks to the retriever, all the OOD metrics are similar to the in-domain results represented by the \"Human Eval\" split. We use a weighted average based on the number of samples per split.\nTo quantify the effect of suggesting step and table names, we evaluate the RAG fine-tuned StarCoderBase-7B model without suggestions in row \"No RAG Avg.\". All metrics worsen significantly while the \"Hallucinated Steps\" remains roughly the same. Upon inspection, we see that the RAG fine-tuned model has learned to be conservative in generating steps when it does not receive suggestions, relying only on steps that it has seen during training. On the other hand, the \"Hallucinated Tables\" metric is significantly worse as the model is more creative when it comes to tables. Please see Appendix B for supplementary detail.\n5.4 Error Analysis\nWhen investigating error patterns found in the generated workflows, we observe issues arising from failures both on the retriever and the LLM.\nFor complex flows where steps that are used less frequently need to be retrieved, if a crucial component is not in the retriever\u2019s suggestions, it becomes difficult for the LLM to generate a valid workflow in line with the user query. To improve the retriever\u2019s recall, we can decompose the query into shorter texts to make the retrieval step more precise for each step. This would mean performing several retrieval calls, potentially one per step, instead of making one single retrieval call as we are doing now.\nIn some cases, the LLM did not produce the desired structure. This is more often seen when using steps that determine the logic of the workflow, such as IF, TRY, or FOREACH. These are important errors that can be addressed by synthetic data generation after analyzing which steps are being missed. For examples of perfect output and when the retriever and LLM fail, please refer to Appendix [C](#A3).\n5.5 Impact on Engineering\nThe obtained results led us to make several decisions that impacted the scalability and modularity of the system. Since the best overall performance was given by a 7B-parameter model, we could have a larger batch size for incoming user requests, thereby increasing the system throughput given a single GPU. This implies a trade-off in latency as larger queries (in number of tokens) result in larger number of generated tokens, sometimes causing large queries to become a bottleneck if they are included in a batch with many shorter queries. Our stress tests and user research reveal that the current system overall response time is acceptable.\nObtaining good results after fine-tuning a very small encoder for the retriever (110M parameters), allowed us to deploy it on the same GPU with negligible effect on the larger LLM. But we could even deploy the retriever on CPU due to its small size. A benefit of not performing joint training between the retriever and the LLM is that the retriever can be reused for other use cases involving similar data sources. Moreover, decoupling them allows clearer separation of concerns and independent optimization by separate team members. Nevertheless, for scientific purposes, it is still worthwhile to experiment with joint training.\nWe have several ideas to reduce the system response time: changing the structured output format from JSON to YAML to reduce the number of tokens, leveraging speculative decoding [Leviathan et\u00a0al. (2023)](#bib.bib18); [Chen et\u00a0al. (2023)](#bib.bib2); [Joao Gante (2023)](#bib.bib14), and streaming one step at a time back to the user instead of the entire generated workflow.\n6 Conclusion\nWe propose an approach to deploy a Retrieval-Augmented LLM to reduce hallucination and allow generalization in a structured output task. Reducing hallucination is a sine qua non for users to adopt real-world GenAI systems. We show that RAG allows deploying a system in limited-resource settings as a very small retriever can be coupled with a small LLM. Future work includes improving the synergy between the retriever and the LLM, through joint training or a model architecture that allows them to work better together.\nEthical Considerations\nWhile our work proposes an approach to reduce hallucination in structure output tasks, we do not claim that the risk of harm due to hallucination is eliminated. Our deployed system includes a layer of post-processing to clearly indicate to users the generated steps that do not exist and urge them to fix the output before continuing their work.\nAcknowledgements\nWe thank our ServiceNow colleagues who worked hard in building the aforementioned system, from project managers to quality engineers. We also thank the several colleagues who reviewed an earlier version of this paper: Lindsay Brin, Hessam Amini, Erfan Hosseini, and Gabrielle Gauthier-Melan\u00e7on, as well as the NAACL reviewers, for their valuable feedback.\nReferences\n- Cambridge (2023)\nCambridge. 2023.\nWhy hallucinate?\n[https://dictionary.cambridge.org/editorial/woty](https://dictionary.cambridge.org/editorial/woty) .\n- Chen et\u00a0al. (2023)\nCharlie Chen, Sebastian Borgeaud, Geoffrey Irving, Jean-Baptiste Lespiau, Laurent Sifre, and John Jumper. 2023.\n[Accelerating large language model decoding with speculative sampling](http://arxiv.org/abs/2302.01318) .\n- Chen et al. (2021) Mark Chen, Jerry Tworek, Heewoo Jun, Qiming Yuan, Henrique Ponde de Oliveira Pinto, Jared Kaplan, Harri Edwards, Yuri Burda, Nicholas Joseph, Greg Brockman, et al. 2021. Evaluating large language models trained on code. arXiv preprint arXiv:2107.03374.\n- Dalal and Galbraith (2020) Dhairya Dalal and Byron V Galbraith. 2020. Evaluating sequence-to-sequence learning models for if-then program synthesis. arXiv preprint arXiv:2002.03485.\n- Dao et al. (2022) Tri Dao, Dan Fu, Stefano Ermon, Atri Rudra, and Christopher R\u00e9. 2022. Flashattention: Fast and memory-efficient exact attention with io-awareness. Advances in Neural Information Processing Systems, 35:16344\u201316359.\n- Douze et\u00a0al. (2024)\nMatthijs Douze, Alexandr Guzhva, Chengqi Deng, Jeff Johnson, Gergely Szilvasy, Pierre-Emmanuel Mazar\u00e9, Maria Lomeli, Lucas Hosseini, and Herv\u00e9 J\u00e9gou. 2024.\n[The faiss library](http://arxiv.org/abs/2401.08281) .\n- Gao et al. (2021) Tianyu Gao, Xingcheng Yao, and Danqi Chen. 2021. Simcse: Simple contrastive learning of sentence embeddings. In 2021 Conference on Empirical Methods in Natural Language Processing, EMNLP 2021, pages 6894\u20136910. Association for Computational Linguistics (ACL).\n- Gao et\u00a0al. (2024)\nYunfan Gao, Yun Xiong, Xinyu Gao, Kangxiang Jia, Jinliu Pan, Yuxi Bi, Yi\u00a0Dai, Jiawei Sun, Qianyu Guo, Meng Wang, and Haofen Wang. 2024.\n[Retrieval-augmented generation for large language models: A survey](http://arxiv.org/abs/2312.10997) .\n- Guu et al. (2020) Kelvin Guu, Kenton Lee, Zora Tung, Panupong Pasupat, and Ming-Wei Chang. 2020. Realm: retrieval-augmented language model pre-training. In Proceedings of the 37th International Conference on Machine Learning, pages 3929\u20133938.\n- Hadsell et al. (2006) Raia Hadsell, Sumit Chopra, and Yann LeCun. 2006. Dimensionality reduction by learning an invariant mapping. In 2006 IEEE Computer Society Conference on Computer Vision and Pattern Recognition, CVPR 2006, pages 1735\u20131742.\n- Hu et al. (2021) Edward J Hu, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, Weizhu Chen, et al. 2021. Lora: Low-rank adaptation of large language models. In International Conference on Learning Representations.\n- Izacard and Grave (2021) Gautier Izacard and Edouard Grave. 2021. Leveraging passage retrieval with generative models for open domain question answering. In EACL 2021-16th Conference of the European Chapter of the Association for Computational Linguistics, pages 874\u2013880. Association for Computational Linguistics.\n- Jiang et al. (2023) Albert Q Jiang, Alexandre Sablayrolles, Arthur Mensch, Chris Bamford, Devendra Singh Chaplot, Diego de las Casas, Florian Bressand, Gianna Lengyel, Guillaume Lample, Lucile Saulnier, et al. 2023. Mistral 7b. arXiv preprint arXiv:2310.06825.\n- Joao Gante (2023)\nJoao Gante. 2023.\n[Assisted generation: a new direction toward low-latency text generation](https://doi.org/10.57967/hf/0638) .\n- Karpukhin et al. (2020) Vladimir Karpukhin, Barlas Oguz, Sewon Min, Patrick Lewis, Ledell Wu, Sergey Edunov, Danqi Chen, and Wen-tau Yih. 2020. Dense passage retrieval for open-domain question answering. In Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP). Association for Computational Linguistics.\n- Kocetkov et al. (2022) Denis Kocetkov, Raymond Li, LI Jia, Chenghao Mou, Yacine Jernite, Margaret Mitchell, Carlos Mu\u00f1oz Ferrandis, Sean Hughes, Thomas Wolf, Dzmitry Bahdanau, et al. 2022. The stack: 3 tb of permissively licensed source code. Transactions on Machine Learning Research.\n- Lee et al. (2019) Kenton Lee, Ming-Wei Chang, and Kristina Toutanova. 2019. Latent retrieval for weakly supervised open domain question answering. In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics, pages 6086\u20136096.\n- Leviathan et\u00a0al. (2023)\nYaniv Leviathan, Matan Kalman, and Yossi Matias. 2023.\n[Fast inference from transformers via speculative decoding](http://arxiv.org/abs/2211.17192) .\n- Lewis et al. (2020) Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Karpukhin, Naman Goyal, Heinrich K\u00fcttler, Mike Lewis, Wen-tau Yih, Tim Rockt\u00e4schel, et al. 2020. Retrieval-augmented generation for knowledge-intensive nlp tasks. In Proceedings of the 34th International Conference on Neural Information Processing Systems, pages 9459\u20139474.\n- Li et al. (2023a) Raymond Li, Loubna Ben Allal, Yangtian Zi, Niklas Muennighoff, Denis Kocetkov, Chenghao Mou, Marc Marone, Christopher Akiki, Jia Li, Jenny Chim, et al. 2023a. Starcoder: may the source be with you! arXiv preprint arXiv:2305.06161.\n- Li et\u00a0al. (2023b)\nXinze Li, Zhenghao Liu, Chenyan Xiong, Shi Yu, Yu\u00a0Gu, Zhiyuan Liu, and Ge\u00a0Yu. 2023b.\n[Structure-aware language model pretraining improves dense retrieval on structured data](https://doi.org/10.18653/v1/2023.findings-acl.734) .\nIn Findings of the Association for Computational Linguistics: ACL 2023, pages 11560\u201311574, Toronto, Canada. Association for Computational Linguistics.\n- Liu et al. (2016) Chang Liu, Xinyun Chen, Eui Chul Shin, Mingcheng Chen, and Dawn Song. 2016. Latent attention for if-then program synthesis. Advances in Neural Information Processing Systems, 29.\n- Loshchilov and Hutter (2018) Ilya Loshchilov and Frank Hutter. 2018. Decoupled weight decay regularization. In International Conference on Learning Representations.\n- Madaan et al. (2022) Aman Madaan, Shuyan Zhou, Uri Alon, Yiming Yang, and Graham Neubig. 2022. Language models of code are few-shot commonsense learners. In Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing, pages 1384\u20131403.\n- Neelakantan et al. (2022) Arvind Neelakantan, Tao Xu, Raul Puri, Alec Radford, Jesse Michael Han, Jerry Tworek, Qiming Yuan, Nikolas Tezak, Jong Wook Kim, Chris Hallacy, et al. 2022. Text and code embeddings by contrastive pre-training. arXiv preprint arXiv:2201.10005.\n- Ni et al. (2022) Jianmo Ni, Chen Qu, Jing Lu, Zhuyun Dai, Gustavo Hernandez Abrego, Ji Ma, Vincent Zhao, Yi Luan, Keith Hall, Ming-Wei Chang, et al. 2022. Large dual encoders are generalizable retrievers. In Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing, pages 9844\u20139855.\n- Nijkamp et al. (2022) Erik Nijkamp, Bo Pang, Hiroaki Hayashi, Lifu Tu, Huan Wang, Yingbo Zhou, Silvio Savarese, and Caiming Xiong. 2022. Codegen: An open large language model for code with multi-turn program synthesis. In The Eleventh International Conference on Learning Representations.\n- Quirk et al. (2015) Chris Quirk, Raymond Mooney, and Michel Galley. 2015. Language to code: Learning semantic parsers for if-this-then-that recipes. In Proceedings of the 53rd Annual Meeting of the Association for Computational Linguistics and the 7th International Joint Conference on Natural Language Processing (Volume 1: Long Papers), pages 878\u2013888.\n- Reimers and Gurevych (2019) Nils Reimers and Iryna Gurevych. 2019. Sentence-bert: Sentence embeddings using siamese bert-networks. In Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP). Association for Computational Linguistics.\n- Roziere et al. (2023) Baptiste Roziere, Jonas Gehring, Fabian Gloeckle, Sten Sootla, Itai Gat, Xiaoqing Ellen Tan, Yossi Adi, Jingyu Liu, Tal Remez, J\u00e9r\u00e9my Rapin, et al. 2023. Code llama: Open foundation models for code. arXiv preprint arXiv:2308.12950.\n- Shuster et al. (2021) Kurt Shuster, Spencer Poff, Moya Chen, Douwe Kiela, and Jason Weston. 2021. Retrieval augmentation reduces hallucination in conversation. In Findings of the Association for Computational Linguistics: EMNLP 2021, pages 3784\u20133803.\n- Wang et al. (2020) Bailin Wang, Richard Shin, Xiaodong Liu, Oleksandr Polozov, and Matthew Richardson. 2020. Rat-sql: Relation-aware schema encoding and linking for text-to-sql parsers. In Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics, pages 7567\u20137578.\n- Willard and Louf (2023) Brandon T Willard and R\u00e9mi Louf. 2023. Efficient guided generation for llms. arXiv preprint arXiv:2307.09702.\n- Xiong et al. (2020) Lee Xiong, Chenyan Xiong, Ye Li, Kwok-Fung Tang, Jialin Liu, Paul N Bennett, Junaid Ahmed, and Arnold Overwijk. 2020. Approximate nearest neighbor negative contrastive learning for dense text retrieval. In International Conference on Learning Representations.\n- Yu et al. (2018) Tao Yu, Rui Zhang, Kai Yang, Michihiro Yasunaga, Dongxu Wang, Zifan Li, James Ma, Irene Li, Qingning Yao, Shanelle Roman, et al. 2018. Spider: A large-scale human-labeled dataset for complex and cross-domain semantic parsing and text-to-sql task. In Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing, pages 3911\u20133921.\n- Zhong et al. (2017) Victor Zhong, Caiming Xiong, and Richard Socher. 2017. Seq2sql: Generating structured queries from natural language using reinforcement learning. arXiv preprint arXiv:1709.00103.\nAppendix A Training details for LLM and retriever\nAll LLMs were fine-tuned using the same set of hyperparameters. We use the AdamW optimizer with a learning rate of , ,  and weight decay of . Models were trained for 5,000 steps with a cosine learning rate scheduler with 100 warmup steps. We use an effective batch size of 32 for all models, using gradient accumulation when the batch size would not fit on a single GPU. We trained all models using LoRA [Hu et\u00a0al. (2021)](#bib.bib11) with ,  and a dropout rate of . All models were trained with flash-attention [Dao et\u00a0al. (2022)](#bib.bib5) on a single A100 80GB GPU.\nWe fine-tuned the retriever model using the SentenceTransformers framework [Reimers and Gurevych (2019)](#bib.bib29). We use the AdamW optimizer [Loshchilov and Hutter (2018)](#bib.bib23) and a learning rate of . We use a batch size of 128 and train the model for 10 epochs.\nAppendix B Differences in generation with and without suggestions\nTo understand the impact of suggesting step and table names during generation, for each OOD split, we inspect the % of unique steps and % of unique table names that are hallucinated with and without suggestions.\nTable [6](#A2.T6) shows that without suggestions, the RAG fine-tuned StarCoderBase-7B tends to generate significantly fewer unique step names. Receiving suggestions allows the model to copy the suggestions, thereby increasing the diversity of what it generates. In addition, without suggestions a greater percentage of the unique step names it generates are invented.\n|  | No suggestions |  | With suggestions |  | \n|---|---|---|---|---|\n| Split | # unique | % H | # unique | % H | \n|  | steps |  | steps |  | \n| OOD1 | 52 | 40% | 100 | 13% | \n| OOD2 | 38 | 34% | 96 | 13% | \n| OOD3 | 122 | 37% | 269 | 9% | \n| OOD4 | 20 | 5% | 32 | 9% | \n| OOD5 | 88 | 17% | 151 | 3% | \nWe also see that even with suggestions, there is still an important gap in the percentage of unique step names that are hallucinated, as in some splits more than 10% of unique steps are invented. While the overall hallucination rate is less than 2%, as shown in Table [5](#S5.T5), there are cases where the retriever does not suggest what is expected or the LLM does not take into account the suggestions.\n|  | No suggestions |  | With suggestions |  | \n|---|---|---|---|---|\n| Split | # unique | % H | # unique | % H | \n|  | tables |  | tables |  | \n| OOD1 | 40 | 70% | 22 | 14% | \n| OOD2 | 31 | 71% | 19 | 21% | \n| OOD3 | 61 | 64% | 44 | 9% | \n| OOD4 | 11 | 54% | 9 | 22% | \n| OOD5 | 38 | 68% | 29 | 17% | \nWhen it comes to table names, there are similar and different observations, as shown in Table [7](#A2.T7). As in the case of step names, without suggestions a greater percentage of unique table names are invented. However, when provided with suggestions, the model is more conservative as it generates fewer unique table names. This may be an artifact of the data, where there is less diversity of tables used compared to step names.\nAppendix C Sample perfect output and errors\nFigure [4](#A2.F4) shows three user queries along with their generated workflows. The first one is a complicated workflow where the LLM is able to follow exactly the structure described in the user query, and is able to use the steps that the user expected. In this case, the retriever suggests only the step post_incident_details, as the rest are considered common steps.\nIn the second example, the retriever fails to suggest the send_slack_message step. The resulting workflow is not entirely wrong but it is of lesser quality as the LLM uses the common step send_notification, which is not what the user expected.\nIn the last example, the LLM shows that it does not sufficiently understand the semantics of the task. The word Try in the user query should have made it use the TRY and CATCH flow logic, but the LLM seems to ignore this word, resulting in a workflow that does not reflect what the user asked for.",
+      "retrieved_at": null,
+      "search_query": "Does RAG reduce hallucinations in LLMs?",
+      "relevance_score": 0.0,
+      "quality_score": 0.0
+    }
+  ],
+  "analyses": [
+    {
+      "claims": [
+        {
+          "id": "claim-1",
+          "statement": "Retrieval-augmented generation (RAG) is a technique that enables large language models (LLMs) to retrieve and incorporate external information.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-1"
+          ]
+        },
+        {
+          "id": "claim-2",
+          "statement": "RAG helps reduce the occurrence of AI hallucinations.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-2"
+          ]
+        },
+        {
+          "id": "claim-3",
+          "statement": "RAG reduces the need to retrain LLMs, saving computational and financial costs.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-3"
+          ]
+        },
+        {
+          "id": "claim-4",
+          "statement": "The term retrieval-augmented generation (RAG) was introduced in a 2020 paper.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-4"
+          ]
+        },
+        {
+          "id": "claim-5",
+          "statement": "LLMs can still produce misinformation when using RAG if they misinterpret the context of factually correct sources.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-5"
+          ]
+        },
+        {
+          "id": "claim-6",
+          "statement": "RAG is not a direct solution to hallucinations because LLMs can still hallucinate around the retrieved source material.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-6"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evidence-1",
+          "claim_id": "claim-1",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "Retrieval-augmented generation (RAG) is a technique that enables large language models (LLMs) to retrieve and incorporate new information from external data sources.",
+          "strength": "strong",
+          "location": "Paragraph 1"
+        },
+        {
+          "id": "evidence-2",
+          "claim_id": "claim-2",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "This method helps reduce AI hallucinations, which have caused chatbots to describe policies that don't exist, or recommend nonexistent legal cases...",
+          "strength": "strong",
+          "location": "Paragraph 2"
+        },
+        {
+          "id": "evidence-3",
+          "claim_id": "claim-3",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "RAG also reduces the need to retrain LLMs with new data, saving on computational and financial costs.",
+          "strength": "strong",
+          "location": "Paragraph 3"
+        },
+        {
+          "id": "evidence-4",
+          "claim_id": "claim-4",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "The term retrieval-augmented generation (RAG) was introduced in a 2020 paper that described combining a parametric language model with a non-parametric external memory accessed through retrieval at inference time.",
+          "strength": "strong",
+          "location": "Paragraph 4"
+        },
+        {
+          "id": "evidence-5",
+          "claim_id": "claim-5",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "For example, LLMs can generate misinformation even when pulling from factually correct sources if they misinterpret the context.",
+          "strength": "strong",
+          "location": "Section 'RAG and LLM limitations', Paragraph 1"
+        },
+        {
+          "id": "evidence-6",
+          "claim_id": "claim-6",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "RAG does not prevent hallucinations in LLMs. According to Ars Technica, 'It is not a direct solution because the LLM can still hallucinate around the source material in its response.'",
+          "strength": "strong",
+          "location": "Section 'Challenges', Paragraph 1"
+        }
+      ]
+    },
+    {
+      "claims": [
+        {
+          "id": "claim-1",
+          "statement": "Conventional RAG systems are still prone to AI hallucinations because they typically rely only on unstructured, general data.",
+          "source_id": "619acb167250fe6e",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-1"
+          ]
+        },
+        {
+          "id": "claim-2",
+          "statement": "A survey indicates that 45% of enterprises plan to deploy or expand GenAI use cases in 2026.",
+          "source_id": "619acb167250fe6e",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-2"
+          ]
+        },
+        {
+          "id": "claim-3",
+          "statement": "The effectiveness of retrieval-augmented generation is limited by data quality, contextual awareness, and internal reasoning.",
+          "source_id": "619acb167250fe6e",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-3"
+          ]
+        },
+        {
+          "id": "claim-4",
+          "statement": "GenAI Data Fusion combines structured and unstructured data from private sources using a data-as-a-product approach to combat hallucinations.",
+          "source_id": "619acb167250fe6e",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-4"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evidence-1",
+          "claim_id": "claim-1",
+          "source_id": "619acb167250fe6e",
+          "content": "In reality, RAG is also prone to AI hallucinations since, until now, it only relies on your unstructured, general data.",
+          "strength": "strong",
+          "location": "What is Retrieval-Augmented Generation (RAG)? section, paragraph 3"
+        },
+        {
+          "id": "evidence-2",
+          "claim_id": "claim-2",
+          "source_id": "619acb167250fe6e",
+          "content": "Our recent survey on the State of Enterprise Data Readiness for GenAI shows that enterprises are making meaningful progress toward production GenAI, with 45% planning to deploy or expand use cases in 2026.",
+          "strength": "strong",
+          "location": "How to reduce AI hallucinations section, paragraph 7"
+        },
+        {
+          "id": "evidence-3",
+          "claim_id": "claim-3",
+          "source_id": "619acb167250fe6e",
+          "content": "Retrieval-augmented generation is limited by its: Data quality, Contextual awareness, Internal reasoning and creativity",
+          "strength": "strong",
+          "location": "How to reduce RAG hallucinations section, list items 1-3"
+        },
+        {
+          "id": "evidence-4",
+          "claim_id": "claim-4",
+          "source_id": "619acb167250fe6e",
+          "content": "One of the most effective ways to combat GenAI and RAG hallucinations is by using the most advanced RAG tool, one that retrieves/augments both structured AND unstructured data from a company\u2019s own private data sources. This approach, called GenAI Data Fusion, accesses the structured data of a single business entity \u2013 customer, vendor, or order \u2013 from enterprise systems based on the concept of data products.",
+          "strength": "strong",
+          "location": "How K2view makes RAG hallucination-free section, paragraphs 1-2"
+        }
+      ]
+    },
+    {
+      "claims": [
+        {
+          "id": "claim_1",
+          "statement": "Retrieval-Augmented Generation (RAG) does not reduce or eliminate hallucinations in Large Language Models (LLMs); it only improves contextual relevance and domain specificity.",
+          "source_id": "74a48bc31ff0d6b2",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence_1"
+          ]
+        },
+        {
+          "id": "claim_2",
+          "statement": "Hallucinations cannot be solved by contextual prompts or retrieval relevance, but must be fixed internally within the LLM itself because hallucination is fundamentally a reasoning problem.",
+          "source_id": "74a48bc31ff0d6b2",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence_2"
+          ]
+        },
+        {
+          "id": "claim_3",
+          "statement": "The retrieval phase in RAG relies on semantic similarity which does not differentiate between factually accurate and inaccurate information.",
+          "source_id": "74a48bc31ff0d6b2",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence_3"
+          ]
+        },
+        {
+          "id": "claim_4",
+          "statement": "The generative phase in RAG models optimizes for sequence likelihood without any inherent mathematical constraint for factual accuracy or verification.",
+          "source_id": "74a48bc31ff0d6b2",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence_4"
+          ]
+        },
+        {
+          "id": "claim_5",
+          "statement": "Integrating factual consistency into the RAG framework to mitigate hallucinations introduces significant mathematical complexity and computational burden.",
+          "source_id": "74a48bc31ff0d6b2",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence_5"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evidence_1",
+          "claim_id": "claim_1",
+          "source_id": "74a48bc31ff0d6b2",
+          "content": "Adding contextual relevance through RAG does not reduce hallucinations in LLMs (As you cannot influence model drifts though this). It only increases your semantic relevance scores! This is not the same as hallucination of the system.",
+          "strength": "strong",
+          "location": "paragraph 8"
+        },
+        {
+          "id": "evidence_2",
+          "claim_id": "claim_2",
+          "source_id": "74a48bc31ff0d6b2",
+          "content": "The only place hallucinations can be fixed is within the LLM. ... Contextual relevance does not have any bearing on the LLM\u2019s reasoning ability or the constraints on the probabilistic selection strategy at the logit layer. Hallucination is a problem of reasoning and not relevance!",
+          "strength": "strong",
+          "location": "paragraphs 4 and 9"
+        },
+        {
+          "id": "evidence_3",
+          "claim_id": "claim_3",
+          "source_id": "74a48bc31ff0d6b2",
+          "content": "The initial challenge arises from the retrieval phase\u2019s reliance on semantic similarity, which is quantified by inner product spaces or cosine similarities. This metric, while capturing semantic closeness, does not differentiate between factually accurate and inaccurate information.",
+          "strength": "strong",
+          "location": "paragraph 15"
+        },
+        {
+          "id": "evidence_4",
+          "claim_id": "claim_4",
+          "source_id": "74a48bc31ff0d6b2",
+          "content": "The generative phase compounds the issue by optimizing for sequence likelihood without direct factual validation. The absence of a mathematical constraint to enforce factual accuracy allows for the propagation and generation of inaccuracies",
+          "strength": "strong",
+          "location": "paragraph 17"
+        },
+        {
+          "id": "evidence_5",
+          "claim_id": "claim_5",
+          "source_id": "74a48bc31ff0d6b2",
+          "content": "Integrating factual consistency into the RAG framework introduces significant mathematical complexity... significantly increasing the computational burden and complexity of the model.",
+          "strength": "strong",
+          "location": "paragraph 19"
+        }
+      ]
+    },
+    {
+      "claims": [
+        {
+          "id": "claim-1",
+          "statement": "Retrieval-Augmented Generation (RAG) significantly reduces hallucinations in workflow step and table generation.",
+          "source_id": "e9f8e636bea792ec",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-1"
+          ]
+        },
+        {
+          "id": "claim-2",
+          "statement": "Using a retriever allows a smaller LLM to achieve comparable performance to a much larger LLM without a retriever.",
+          "source_id": "e9f8e636bea792ec",
+          "confidence": 0.9,
+          "evidence_ids": [
+            "evidence-2"
+          ]
+        },
+        {
+          "id": "claim-3",
+          "statement": "Fine-tuning the retriever encoder is critical for achieving high retrieval performance on structured JSON data compared to simply scaling off-the-shelf models.",
+          "source_id": "e9f8e636bea792ec",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-3"
+          ]
+        },
+        {
+          "id": "claim-4",
+          "statement": "The RAG-based workflow generation model generalizes effectively to out-of-domain datasets.",
+          "source_id": "e9f8e636bea792ec",
+          "confidence": 0.9,
+          "evidence_ids": [
+            "evidence-4"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evidence-1",
+          "claim_id": "claim-1",
+          "source_id": "e9f8e636bea792ec",
+          "content": "Without a retriever (only LLM fine-tuning), the % of hallucinated steps and tables can be as high as 21% on the \"Human Eval\" split. Using a retriever, this decreases to less than 7.5% for steps and less than 4.5% for tables with all StarCoderBase LLMs.",
+          "strength": "strong",
+          "location": "Section 5.2 Retrieval-Augmented Generation"
+        },
+        {
+          "id": "evidence-2",
+          "claim_id": "claim-2",
+          "source_id": "e9f8e636bea792ec",
+          "content": "the 3B version trained with RAG is competitive even with the 15.5B version without RAG on the Trigger EM and Bag of Steps metrics, while keeping hallucination low.",
+          "strength": "strong",
+          "location": "Section 5.2 Retrieval-Augmented Generation"
+        },
+        {
+          "id": "evidence-3",
+          "claim_id": "claim-3",
+          "source_id": "e9f8e636bea792ec",
+          "content": "Scaling the size of the off-the-shelf encoders, as we did with GTR-T5, does not yield significant improvements on both retrieval metrics. ... What was crucial to significantly improve the performance was fine-tuning the encoder.",
+          "strength": "strong",
+          "location": "Section 5.1 Retriever encoder"
+        },
+        {
+          "id": "evidence-4",
+          "claim_id": "claim-4",
+          "source_id": "e9f8e636bea792ec",
+          "content": "We observe that on average, thanks to the retriever, all the OOD metrics are similar to the in-domain results represented by the \"Human Eval\" split.",
+          "strength": "strong",
+          "location": "Section 5.3 OOD evaluation"
+        }
+      ]
+    },
+    {
+      "claims": [
+        {
+          "id": "claim-1",
+          "statement": "Retrieval-augmented generation (RAG) is a technique that enables large language models (LLMs) to retrieve and incorporate external information.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-1"
+          ]
+        },
+        {
+          "id": "claim-2",
+          "statement": "RAG helps reduce the occurrence of AI hallucinations.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-2"
+          ]
+        },
+        {
+          "id": "claim-3",
+          "statement": "RAG reduces the need to retrain LLMs, saving computational and financial costs.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-3"
+          ]
+        },
+        {
+          "id": "claim-4",
+          "statement": "The term retrieval-augmented generation (RAG) was introduced in a 2020 paper.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-4"
+          ]
+        },
+        {
+          "id": "claim-5",
+          "statement": "LLMs can still produce misinformation when using RAG if they misinterpret the context of factually correct sources.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-5"
+          ]
+        },
+        {
+          "id": "claim-6",
+          "statement": "RAG is not a direct solution to hallucinations because LLMs can still hallucinate around the retrieved source material.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-6"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evidence-1",
+          "claim_id": "claim-1",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "Retrieval-augmented generation (RAG) is a technique that enables large language models (LLMs) to retrieve and incorporate new information from external data sources.",
+          "strength": "strong",
+          "location": "Paragraph 1"
+        },
+        {
+          "id": "evidence-2",
+          "claim_id": "claim-2",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "This method helps reduce AI hallucinations, which have caused chatbots to describe policies that don't exist, or recommend nonexistent legal cases...",
+          "strength": "strong",
+          "location": "Paragraph 2"
+        },
+        {
+          "id": "evidence-3",
+          "claim_id": "claim-3",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "RAG also reduces the need to retrain LLMs with new data, saving on computational and financial costs.",
+          "strength": "strong",
+          "location": "Paragraph 3"
+        },
+        {
+          "id": "evidence-4",
+          "claim_id": "claim-4",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "The term retrieval-augmented generation (RAG) was introduced in a 2020 paper that described combining a parametric language model with a non-parametric external memory accessed through retrieval at inference time.",
+          "strength": "strong",
+          "location": "Paragraph 4"
+        },
+        {
+          "id": "evidence-5",
+          "claim_id": "claim-5",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "For example, LLMs can generate misinformation even when pulling from factually correct sources if they misinterpret the context.",
+          "strength": "strong",
+          "location": "Section 'RAG and LLM limitations', Paragraph 1"
+        },
+        {
+          "id": "evidence-6",
+          "claim_id": "claim-6",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "RAG does not prevent hallucinations in LLMs. According to Ars Technica, 'It is not a direct solution because the LLM can still hallucinate around the source material in its response.'",
+          "strength": "strong",
+          "location": "Section 'Challenges', Paragraph 1"
+        }
+      ]
+    },
+    {
+      "claims": [
+        {
+          "id": "claim-1",
+          "statement": "Conventional RAG systems are still prone to AI hallucinations because they typically rely only on unstructured, general data.",
+          "source_id": "619acb167250fe6e",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-1"
+          ]
+        },
+        {
+          "id": "claim-2",
+          "statement": "A survey indicates that 45% of enterprises plan to deploy or expand GenAI use cases in 2026.",
+          "source_id": "619acb167250fe6e",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-2"
+          ]
+        },
+        {
+          "id": "claim-3",
+          "statement": "The effectiveness of retrieval-augmented generation is limited by data quality, contextual awareness, and internal reasoning.",
+          "source_id": "619acb167250fe6e",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-3"
+          ]
+        },
+        {
+          "id": "claim-4",
+          "statement": "GenAI Data Fusion combines structured and unstructured data from private sources using a data-as-a-product approach to combat hallucinations.",
+          "source_id": "619acb167250fe6e",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-4"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evidence-1",
+          "claim_id": "claim-1",
+          "source_id": "619acb167250fe6e",
+          "content": "In reality, RAG is also prone to AI hallucinations since, until now, it only relies on your unstructured, general data.",
+          "strength": "strong",
+          "location": "What is Retrieval-Augmented Generation (RAG)? section, paragraph 3"
+        },
+        {
+          "id": "evidence-2",
+          "claim_id": "claim-2",
+          "source_id": "619acb167250fe6e",
+          "content": "Our recent survey on the State of Enterprise Data Readiness for GenAI shows that enterprises are making meaningful progress toward production GenAI, with 45% planning to deploy or expand use cases in 2026.",
+          "strength": "strong",
+          "location": "How to reduce AI hallucinations section, paragraph 7"
+        },
+        {
+          "id": "evidence-3",
+          "claim_id": "claim-3",
+          "source_id": "619acb167250fe6e",
+          "content": "Retrieval-augmented generation is limited by its: Data quality, Contextual awareness, Internal reasoning and creativity",
+          "strength": "strong",
+          "location": "How to reduce RAG hallucinations section, list items 1-3"
+        },
+        {
+          "id": "evidence-4",
+          "claim_id": "claim-4",
+          "source_id": "619acb167250fe6e",
+          "content": "One of the most effective ways to combat GenAI and RAG hallucinations is by using the most advanced RAG tool, one that retrieves/augments both structured AND unstructured data from a company\u2019s own private data sources. This approach, called GenAI Data Fusion, accesses the structured data of a single business entity \u2013 customer, vendor, or order \u2013 from enterprise systems based on the concept of data products.",
+          "strength": "strong",
+          "location": "How K2view makes RAG hallucination-free section, paragraphs 1-2"
+        }
+      ]
+    },
+    {
+      "claims": [
+        {
+          "id": "claim-1",
+          "statement": "Retrieval-Augmented Generation (RAG) significantly reduces hallucinations in workflow step and table generation.",
+          "source_id": "e9f8e636bea792ec",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-1"
+          ]
+        },
+        {
+          "id": "claim-2",
+          "statement": "Using a retriever allows a smaller LLM to achieve comparable performance to a much larger LLM without a retriever.",
+          "source_id": "e9f8e636bea792ec",
+          "confidence": 0.9,
+          "evidence_ids": [
+            "evidence-2"
+          ]
+        },
+        {
+          "id": "claim-3",
+          "statement": "Fine-tuning the retriever encoder is critical for achieving high retrieval performance on structured JSON data compared to simply scaling off-the-shelf models.",
+          "source_id": "e9f8e636bea792ec",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-3"
+          ]
+        },
+        {
+          "id": "claim-4",
+          "statement": "The RAG-based workflow generation model generalizes effectively to out-of-domain datasets.",
+          "source_id": "e9f8e636bea792ec",
+          "confidence": 0.9,
+          "evidence_ids": [
+            "evidence-4"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evidence-1",
+          "claim_id": "claim-1",
+          "source_id": "e9f8e636bea792ec",
+          "content": "Without a retriever (only LLM fine-tuning), the % of hallucinated steps and tables can be as high as 21% on the \"Human Eval\" split. Using a retriever, this decreases to less than 7.5% for steps and less than 4.5% for tables with all StarCoderBase LLMs.",
+          "strength": "strong",
+          "location": "Section 5.2 Retrieval-Augmented Generation"
+        },
+        {
+          "id": "evidence-2",
+          "claim_id": "claim-2",
+          "source_id": "e9f8e636bea792ec",
+          "content": "the 3B version trained with RAG is competitive even with the 15.5B version without RAG on the Trigger EM and Bag of Steps metrics, while keeping hallucination low.",
+          "strength": "strong",
+          "location": "Section 5.2 Retrieval-Augmented Generation"
+        },
+        {
+          "id": "evidence-3",
+          "claim_id": "claim-3",
+          "source_id": "e9f8e636bea792ec",
+          "content": "Scaling the size of the off-the-shelf encoders, as we did with GTR-T5, does not yield significant improvements on both retrieval metrics. ... What was crucial to significantly improve the performance was fine-tuning the encoder.",
+          "strength": "strong",
+          "location": "Section 5.1 Retriever encoder"
+        },
+        {
+          "id": "evidence-4",
+          "claim_id": "claim-4",
+          "source_id": "e9f8e636bea792ec",
+          "content": "We observe that on average, thanks to the retriever, all the OOD metrics are similar to the in-domain results represented by the \"Human Eval\" split.",
+          "strength": "strong",
+          "location": "Section 5.3 OOD evaluation"
+        }
+      ]
+    },
+    {
+      "claims": [
+        {
+          "id": "claim-1",
+          "statement": "Retrieval-augmented generation (RAG) is a technique that enables large language models (LLMs) to retrieve and incorporate external information.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-1"
+          ]
+        },
+        {
+          "id": "claim-2",
+          "statement": "RAG helps reduce the occurrence of AI hallucinations.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-2"
+          ]
+        },
+        {
+          "id": "claim-3",
+          "statement": "RAG reduces the need to retrain LLMs, saving computational and financial costs.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-3"
+          ]
+        },
+        {
+          "id": "claim-4",
+          "statement": "The term retrieval-augmented generation (RAG) was introduced in a 2020 paper.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-4"
+          ]
+        },
+        {
+          "id": "claim-5",
+          "statement": "LLMs can still produce misinformation when using RAG if they misinterpret the context of factually correct sources.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-5"
+          ]
+        },
+        {
+          "id": "claim-6",
+          "statement": "RAG is not a direct solution to hallucinations because LLMs can still hallucinate around the retrieved source material.",
+          "source_id": "b43f8e16786a1aa9",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-6"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evidence-1",
+          "claim_id": "claim-1",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "Retrieval-augmented generation (RAG) is a technique that enables large language models (LLMs) to retrieve and incorporate new information from external data sources.",
+          "strength": "strong",
+          "location": "Paragraph 1"
+        },
+        {
+          "id": "evidence-2",
+          "claim_id": "claim-2",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "This method helps reduce AI hallucinations, which have caused chatbots to describe policies that don't exist, or recommend nonexistent legal cases...",
+          "strength": "strong",
+          "location": "Paragraph 2"
+        },
+        {
+          "id": "evidence-3",
+          "claim_id": "claim-3",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "RAG also reduces the need to retrain LLMs with new data, saving on computational and financial costs.",
+          "strength": "strong",
+          "location": "Paragraph 3"
+        },
+        {
+          "id": "evidence-4",
+          "claim_id": "claim-4",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "The term retrieval-augmented generation (RAG) was introduced in a 2020 paper that described combining a parametric language model with a non-parametric external memory accessed through retrieval at inference time.",
+          "strength": "strong",
+          "location": "Paragraph 4"
+        },
+        {
+          "id": "evidence-5",
+          "claim_id": "claim-5",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "For example, LLMs can generate misinformation even when pulling from factually correct sources if they misinterpret the context.",
+          "strength": "strong",
+          "location": "Section 'RAG and LLM limitations', Paragraph 1"
+        },
+        {
+          "id": "evidence-6",
+          "claim_id": "claim-6",
+          "source_id": "b43f8e16786a1aa9",
+          "content": "RAG does not prevent hallucinations in LLMs. According to Ars Technica, 'It is not a direct solution because the LLM can still hallucinate around the source material in its response.'",
+          "strength": "strong",
+          "location": "Section 'Challenges', Paragraph 1"
+        }
+      ]
+    },
+    {
+      "claims": [
+        {
+          "id": "claim-1",
+          "statement": "Conventional RAG systems are still prone to AI hallucinations because they typically rely only on unstructured, general data.",
+          "source_id": "619acb167250fe6e",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-1"
+          ]
+        },
+        {
+          "id": "claim-2",
+          "statement": "A survey indicates that 45% of enterprises plan to deploy or expand GenAI use cases in 2026.",
+          "source_id": "619acb167250fe6e",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-2"
+          ]
+        },
+        {
+          "id": "claim-3",
+          "statement": "The effectiveness of retrieval-augmented generation is limited by data quality, contextual awareness, and internal reasoning.",
+          "source_id": "619acb167250fe6e",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-3"
+          ]
+        },
+        {
+          "id": "claim-4",
+          "statement": "GenAI Data Fusion combines structured and unstructured data from private sources using a data-as-a-product approach to combat hallucinations.",
+          "source_id": "619acb167250fe6e",
+          "confidence": 0.95,
+          "evidence_ids": [
+            "evidence-4"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evidence-1",
+          "claim_id": "claim-1",
+          "source_id": "619acb167250fe6e",
+          "content": "In reality, RAG is also prone to AI hallucinations since, until now, it only relies on your unstructured, general data.",
+          "strength": "strong",
+          "location": "What is Retrieval-Augmented Generation (RAG)? section, paragraph 3"
+        },
+        {
+          "id": "evidence-2",
+          "claim_id": "claim-2",
+          "source_id": "619acb167250fe6e",
+          "content": "Our recent survey on the State of Enterprise Data Readiness for GenAI shows that enterprises are making meaningful progress toward production GenAI, with 45% planning to deploy or expand use cases in 2026.",
+          "strength": "strong",
+          "location": "How to reduce AI hallucinations section, paragraph 7"
+        },
+        {
+          "id": "evidence-3",
+          "claim_id": "claim-3",
+          "source_id": "619acb167250fe6e",
+          "content": "Retrieval-augmented generation is limited by its: Data quality, Contextual awareness, Internal reasoning and creativity",
+          "strength": "strong",
+          "location": "How to reduce RAG hallucinations section, list items 1-3"
+        },
+        {
+          "id": "evidence-4",
+          "claim_id": "claim-4",
+          "source_id": "619acb167250fe6e",
+          "content": "One of the most effective ways to combat GenAI and RAG hallucinations is by using the most advanced RAG tool, one that retrieves/augments both structured AND unstructured data from a company\u2019s own private data sources. This approach, called GenAI Data Fusion, accesses the structured data of a single business entity \u2013 customer, vendor, or order \u2013 from enterprise systems based on the concept of data products.",
+          "strength": "strong",
+          "location": "How K2view makes RAG hallucination-free section, paragraphs 1-2"
+        }
+      ]
+    }
+  ],
+  "relationships": [],
+  "critique": {
+    "sufficient": false,
+    "overall_confidence": 0.55,
+    "strengths": [
+      "Identifies the core tension between different perspectives: one claiming RAG significantly reduces hallucinations and another arguing RAG only masks them or fails to address the underlying reasoning issues.",
+      "Brings up diverse domains where RAG is applied, such as structured workflow and table generation.",
+      "Highlights critical vulnerabilities in RAG systems, such as dependency on data quality, semantic similarity limits, and context misinterpretation."
+    ],
+    "weaknesses": [
+      "All source quality indicators are rated at 0.00, pointing to a lack of highly verified, peer-reviewed scientific studies in the current source pool.",
+      "There are significant duplicate claims and unmapped contradictions (e.g., claim-2 from Wikipedia/Vectara claiming RAG reduces hallucinations versus claim_1 from Medium asserting RAG does not reduce or eliminate them).",
+      "No quantitative benchmarks or statistical evaluations are provided to substantiate how much RAG actually reduces hallucination rates in practice."
+    ],
+    "missing_information": [
+      "Standardized benchmark results (such as HaluEval, TruthfulQA, or RAGAS) comparing LLM outputs with and without RAG.",
+      "Clear distinction in terminology between 'source-faithfulness' (not hallucinating relative to the retrieved context) and 'external factual correctness'.",
+      "An analysis of how different retrieval strategies (dense vs. sparse vs. hybrid) and generation-phase constraints (like chain-of-thought) affect the final hallucination rate."
+    ],
+    "follow_up_questions": [
+      "What do empirical benchmarks (e.g., HaluEval) quantitatively show about the hallucination rate reduction when comparing RAG to vanilla LLMs?",
+      "How do state-of-the-art models handle contradictions or incorrect information within the retrieved documents?",
+      "To what extent does fine-tuning LLMs specifically on RAG tasks (e.g., RAFT - Retrieval-Augmented Fine-Tuning) reduce context-unfaithful hallucinations compared to standard RAG?"
+    ]
+  },
+  "iterations": 3,
+  "state": {
+    "run_id": "648e9585-e765-476f-bcf4-b9099cc4125f",
+    "iteration": 3,
+    "status": "max_iterations",
+    "sources_found": 5,
+    "claims_found": 43,
+    "relationships_found": 0,
+    "confidence": 0.55,
+    "started_at": "2026-08-26T09:05:58.046559Z",
+    "completed_at": "2026-08-26T09:09:10.085974Z"
+  },
+  "events": [
+    {
+      "event": "research_started",
+      "iteration": 0,
+      "timestamp": "2026-08-26T09:05:58.046575Z",
+      "data": {}
+    },
+    {
+      "event": "iteration_started",
+      "iteration": 1,
+      "timestamp": "2026-08-26T09:05:58.046600Z",
+      "data": {}
+    },
+    {
+      "event": "iteration_completed",
+      "iteration": 1,
+      "timestamp": "2026-08-26T09:07:19.477325Z",
+      "data": {
+        "sources": 4,
+        "claims": 15,
+        "relationships": 3,
+        "confidence": 0.4,
+        "sufficient": false
+      }
+    },
+    {
+      "event": "iteration_started",
+      "iteration": 2,
+      "timestamp": "2026-08-26T09:07:19.477463Z",
+      "data": {}
+    },
+    {
+      "event": "iteration_completed",
+      "iteration": 2,
+      "timestamp": "2026-08-26T09:08:43.215170Z",
+      "data": {
+        "sources": 5,
+        "claims": 29,
+        "relationships": 5,
+        "confidence": 0.5,
+        "sufficient": false
+      }
+    },
+    {
+      "event": "iteration_started",
+      "iteration": 3,
+      "timestamp": "2026-08-26T09:08:43.215298Z",
+      "data": {}
+    },
+    {
+      "event": "iteration_completed",
+      "iteration": 3,
+      "timestamp": "2026-08-26T09:09:10.085829Z",
+      "data": {
+        "sources": 5,
+        "claims": 43,
+        "relationships": 0,
+        "confidence": 0.55,
+        "sufficient": false
+      }
+    },
+    {
+      "event": "research_max_iterations",
+      "iteration": 3,
+      "timestamp": "2026-08-26T09:09:10.085995Z",
+      "data": {
+        "confidence": 0.55
+      }
+    }
+  ]
+}

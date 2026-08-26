@@ -16,19 +16,42 @@ class Researcher:
         self.source_ingestor = source_ingestor
         self.source_manager = source_manager
 
-    def search(self, plan: ResearchPlan) -> list[Source]:
+    def search(
+        self,
+        plan: ResearchPlan,
+    ) -> list[Source]:
+
         sources: list[Source] = []
 
         for query in plan.search_queries:
-            results = self.search_provider.search(query)
+
+            results = self.search_provider.search(
+                query
+            )
 
             for source in results:
-                source = source.model_copy(
-                    update={"search_query": query}
+
+                if source is None:
+                    continue
+
+                source.search_query = query
+
+                ingested = (
+                    self.source_ingestor.ingest(
+                        source
+                    )
                 )
 
-                source = self.source_ingestor.ingest(source)
+                if ingested is None:
+                    continue
 
-                sources.append(source)
+                sources.append(
+                    ingested
+                )
 
-        return self.source_manager.clean(sources)
+        if not sources:
+            return []
+
+        return self.source_manager.clean(
+            sources
+        )

@@ -1,26 +1,43 @@
-from urllib.parse import urlparse
-
 from app.models.schemas import Source
 
 
 class SourceManager:
 
-    def clean(self, sources: list[Source]) -> list[Source]:
-        unique_sources: dict[str, Source] = {}
+    def clean(
+        self,
+        sources: list[Source | None],
+    ) -> list[Source]:
+
+        cleaned: list[Source] = []
+
+        seen_ids: set[str] = set()
+        seen_urls: set[str] = set()
 
         for source in sources:
+
+            if source is None:
+                continue
+
             if not source.content:
                 continue
 
-            normalized_url = self._normalize_url(str(source.url))
+            source_id = str(source.id)
 
-            if normalized_url not in unique_sources:
-                unique_sources[normalized_url] = source
+            # Normalize URL:
+            # https://example.com/paper
+            # https://example.com/paper/
+            # should be treated as the same URL.
+            source_url = str(source.url).rstrip("/")
 
-        return list(unique_sources.values())
+            if source_id in seen_ids:
+                continue
 
-    @staticmethod
-    def _normalize_url(url: str) -> str:
-        parsed = urlparse(url)
+            if source_url in seen_urls:
+                continue
 
-        return f"{parsed.scheme}://{parsed.netloc}{parsed.path}".rstrip("/")
+            seen_ids.add(source_id)
+            seen_urls.add(source_url)
+
+            cleaned.append(source)
+
+        return cleaned
