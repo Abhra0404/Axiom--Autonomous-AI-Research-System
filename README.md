@@ -221,54 +221,6 @@ This makes the research process inspectable rather than treating the final answe
 
 ---
 
-## Roadmap
-
-### V0 — Research Foundation
-
-* [ ] Project architecture
-* [ ] Research request schema
-* [ ] Planner
-* [ ] Basic web/paper research
-* [ ] Source collection
-* [ ] Report generation
-
-### V1 — Evidence Engine
-
-* [ ] Claim extraction
-* [ ] Evidence extraction
-* [ ] Citation tracking
-* [ ] Source quality evaluation
-* [ ] Contradiction detection
-
-### V2 — Autonomous Research Loop
-
-* [ ] Critic Agent
-* [ ] Knowledge-gap detection
-* [ ] Follow-up question generation
-* [ ] Iterative research
-* [ ] Research stopping criteria
-
-### V3 — Experimental Research
-
-* [ ] Experiment planning
-* [ ] Dataset discovery
-* [ ] Code generation
-* [ ] Sandboxed execution
-* [ ] Statistical evaluation
-* [ ] Experiment tracking
-
-### V4 — Production Platform
-
-* [ ] Research workspace
-* [ ] Research history
-* [ ] Experiment lineage
-* [ ] Parallel execution
-* [ ] Observability
-* [ ] Cost tracking
-* [ ] Production deployment
-
----
-
 ## Design Principles
 
 **Evidence over confidence**
