@@ -1,19 +1,17 @@
 from dataclasses import dataclass
-from pydantic import Field
+from datetime import datetime, timezone
+from uuid import uuid4
 
-from app.agents.critic import CriticAgent
-from app.agents.evidence import EvidenceAgent
-from app.agents.planner import Planner
-from app.agents.researcher import Researcher
-from app.core.source_ranker import SourceRanker
-from app.core.claim_analyzer import ClaimAnalyzer
 from app.models.schemas import (
+    ClaimRelationship,
     Critique,
     EvidenceAnalysis,
     ResearchPlan,
     Source,
-    ClaimRelationship
 )
+from app.models.state import ResearchState
+from app.models.events import ResearchEvent
+from app.core.event_logger import ResearchEventLogger
 
 
 @dataclass
@@ -21,161 +19,267 @@ class ResearchResult:
     plan: ResearchPlan
     sources: list[Source]
     analyses: list[EvidenceAnalysis]
+    relationships: list[ClaimRelationship]
     critique: Critique
     iterations: int
-    relationships: list[ClaimRelationship] = Field(
-        default_factory=list,
-    )
+    state: ResearchState
+    events: list[ResearchEvent]
 
 
 class ResearchLoop:
 
     def __init__(
         self,
-        planner: Planner,
-        researcher: Researcher,
-        evidence_agent: EvidenceAgent,
-        critic: CriticAgent,
-        source_ranker: SourceRanker,
-        claim_analyzer: ClaimAnalyzer,
+        planner,
+        researcher,
+        source_ranker,
+        evidence_agent,
+        critic,
+        claim_analyzer,
+        event_logger: ResearchEventLogger | None = None,
         max_iterations: int = 3,
     ):
         self.planner = planner
         self.researcher = researcher
+        self.source_ranker = source_ranker
         self.evidence_agent = evidence_agent
         self.critic = critic
-        self.source_ranker = source_ranker
-        self.max_iterations = max_iterations
         self.claim_analyzer = claim_analyzer
+        self.event_logger = (
+            event_logger
+            or ResearchEventLogger()
+        )
+        self.max_iterations = max_iterations
 
     def run(
         self,
         plan: ResearchPlan,
     ) -> ResearchResult:
 
+        # -----------------------------------------------------
+        # Initialize state
+        # -----------------------------------------------------
+
+        state = ResearchState(
+            run_id=uuid4(),
+            status="running",
+            started_at=datetime.now(
+                timezone.utc
+            ),
+        )
+
+        self.event_logger.emit(
+            event="research_started",
+            iteration=0,
+        )
+
+        # -----------------------------------------------------
+        # Research collections
+        # -----------------------------------------------------
+
         all_sources: list[Source] = []
-        all_analyses: list[EvidenceAnalysis] = []
 
-        current_plan = plan
+        all_analyses: list[
+            EvidenceAnalysis
+        ] = []
+
+        all_relationships: list[
+            ClaimRelationship
+        ] = []
+
+        critique: Critique | None = None
+
         iteration = 0
-        critique = None
 
-        while iteration < self.max_iterations:
+        # -----------------------------------------------------
+        # Research iterations
+        # -----------------------------------------------------
 
-            iteration += 1
+        for iteration in range(
+            1,
+            self.max_iterations + 1,
+        ):
 
             print(
-                f"\n{'=' * 70}"
+                "\n"
+                + "=" * 62
             )
+
             print(
                 f"RESEARCH ITERATION {iteration}"
             )
+
             print(
-                f"{'=' * 70}"
+                "=" * 62
             )
 
-            # ---------------------------------------------
+            state.iteration = iteration
+
+            self.event_logger.emit(
+                event="iteration_started",
+                iteration=iteration,
+            )
+
+            # -------------------------------------------------
             # Search
-            # ---------------------------------------------
+            # -------------------------------------------------
 
             sources = self.researcher.search(
-                current_plan
+                plan
             )
 
-            # ---------------------------------------------
-            # Rank
-            # ---------------------------------------------
-
-            sources = self.source_ranker.rank(
-                sources,
-                current_plan.question,
-            )
-
-            sources = self.source_ranker.select(
-                sources,
-                top_k=3,
-            )
-
-            # ---------------------------------------------
-            # Deduplicate across iterations
-            # ---------------------------------------------
-
-            existing_urls = {
-                str(source.url)
+            existing_source_ids = {
+                source.id
                 for source in all_sources
             }
 
-            sources = [
+            new_sources = [
                 source
                 for source in sources
-                if str(source.url)
-                not in existing_urls
+                if source.id
+                not in existing_source_ids
             ]
 
-            if not sources:
-                print(
-                    "No new sources found."
-                )
-                break
-
-            all_sources.extend(sources)
+            all_sources.extend(
+                new_sources
+            )
 
             print(
-                f"New sources: {len(sources)}"
+                f"New sources: "
+                f"{len(new_sources)}"
             )
 
-            # ---------------------------------------------
+            # -------------------------------------------------
+            # Rank sources
+            # -------------------------------------------------
+
+            ranked_sources = (
+                self.source_ranker.rank(
+                    all_sources,
+                    plan.question,
+                )
+            )
+
+            selected_sources = (
+                self.source_ranker.select(
+                    ranked_sources
+                )
+            )
+
+            # -------------------------------------------------
             # Evidence extraction
-            # ---------------------------------------------
+            # -------------------------------------------------
 
-            for source in sources:
+            for source in selected_sources:
 
-                try:
-
-                    analyses = [
-                        self.evidence_agent.analyze(source)
-                    ]
-
-                    claims = [
-                        claim
-                        for analysis in analyses
-                        for claim in analysis.claims
-                    ]
-
-                    relationships = self.claim_analyzer.analyze(
-                        claims
+                already_analyzed = any(
+                    analysis.source_id == source.id
+                    if hasattr(
+                        analysis,
+                        "source_id",
                     )
+                    else False
+                    for analysis in all_analyses
+                )
 
-                    all_analyses.append(
-                        analyses
+                if already_analyzed:
+                    continue
+
+                analysis = (
+                    self.evidence_agent.analyze(
+                        source
                     )
+                )
 
-                    print(
-                        f"Analyzed: "
-                        f"{source.title}"
-                    )
+                all_analyses.append(
+                    analysis
+                )
 
-                except Exception as error:
+                print(
+                    f"Analyzed: "
+                    f"{source.title}"
+                )
 
-                    print(
-                        f"Failed: "
-                        f"{source.title}"
-                    )
+            # -------------------------------------------------
+            # Collect claims
+            # -------------------------------------------------
 
-                    print(
-                        f"Error: {error}"
-                    )
+            claims = [
+                claim
+                for analysis in all_analyses
+                for claim in analysis.claims
+            ]
 
-            # ---------------------------------------------
-            # Critique
-            # ---------------------------------------------
+            # -------------------------------------------------
+            # Claim relationship analysis
+            # -------------------------------------------------
+
+            relationships = (
+                self.claim_analyzer.analyze(
+                    claims
+                )
+            )
+
+            all_relationships = (
+                relationships
+            )
+
+            # -------------------------------------------------
+            # Critic
+            # -------------------------------------------------
 
             critique = self.critic.critique(
-                current_plan,
-                all_sources,
-                all_analyses,
-                relationships,
+                plan=plan,
+                sources=all_sources,
+                analyses=all_analyses,
+                relationships=all_relationships,
             )
+
+            # -------------------------------------------------
+            # Update research state
+            # -------------------------------------------------
+
+            state.sources_found = len(
+                all_sources
+            )
+
+            state.claims_found = len(
+                claims
+            )
+
+            state.relationships_found = len(
+                all_relationships
+            )
+
+            state.confidence = (
+                critique.overall_confidence
+            )
+
+            # -------------------------------------------------
+            # Iteration event
+            # -------------------------------------------------
+
+            self.event_logger.emit(
+                event="iteration_completed",
+                iteration=iteration,
+                data={
+                    "sources": len(all_sources),
+                    "claims": len(claims),
+                    "relationships": len(
+                        all_relationships
+                    ),
+                    "confidence": (
+                        critique.overall_confidence
+                    ),
+                    "sufficient": (
+                        critique.sufficient
+                    ),
+                },
+            )
+
+            # -------------------------------------------------
+            # Console output
+            # -------------------------------------------------
 
             print(
                 f"\nSufficient: "
@@ -187,11 +291,29 @@ class ResearchLoop:
                 f"{critique.overall_confidence:.2f}"
             )
 
-            # ---------------------------------------------
-            # Stop condition
-            # ---------------------------------------------
+            # -------------------------------------------------
+            # Research complete
+            # -------------------------------------------------
 
             if critique.sufficient:
+
+                state.status = "completed"
+
+                state.completed_at = (
+                    datetime.now(
+                        timezone.utc
+                    )
+                )
+
+                self.event_logger.emit(
+                    event="research_completed",
+                    iteration=iteration,
+                    data={
+                        "confidence": (
+                            critique.overall_confidence
+                        ),
+                    },
+                )
 
                 print(
                     "\nResearch is sufficient."
@@ -199,51 +321,82 @@ class ResearchLoop:
 
                 break
 
-            # ---------------------------------------------
-            # Generate next research plan
-            # ---------------------------------------------
+            # -------------------------------------------------
+            # Continue research
+            # -------------------------------------------------
 
-            if not critique.follow_up_questions:
+            print(
+                "\nResearch is insufficient."
+            )
+
+            if iteration < self.max_iterations:
 
                 print(
-                    "\nNo follow-up questions."
+                    "Continuing research..."
                 )
 
-                break
+        # -----------------------------------------------------
+        # Maximum iterations reached
+        # -----------------------------------------------------
 
-            current_plan = self._create_follow_up_plan(
-                current_plan,
-                critique,
+        if (
+            critique is not None
+            and not critique.sufficient
+            and iteration >= self.max_iterations
+        ):
+
+            state.status = "max_iterations"
+
+            state.completed_at = (
+                datetime.now(
+                    timezone.utc
+                )
             )
+
+            self.event_logger.emit(
+                event="research_max_iterations",
+                iteration=iteration,
+                data={
+                    "confidence": (
+                        critique.overall_confidence
+                    ),
+                },
+            )
+
+            print(
+                "\nMaximum research iterations reached."
+            )
+
+        # -----------------------------------------------------
+        # Safety check
+        # -----------------------------------------------------
 
         if critique is None:
 
-            raise RuntimeError(
-                "Research loop produced no critique."
+            state.status = "failed"
+
+            state.completed_at = (
+                datetime.now(
+                    timezone.utc
+                )
             )
+
+            raise RuntimeError(
+                "Research loop completed without "
+                "producing a critique."
+            )
+
+        # -----------------------------------------------------
+        # Return result
+        # -----------------------------------------------------
 
         return ResearchResult(
             plan=plan,
-            sources=sources,
-            analyses=analyses,
-            relationships=relationships,
+            sources=all_sources,
+            analyses=all_analyses,
+            relationships=all_relationships,
             critique=critique,
             iterations=iteration,
-        )
-
-    @staticmethod
-    def _create_follow_up_plan(
-        plan: ResearchPlan,
-        critique: Critique,
-    ) -> ResearchPlan:
-
-        return plan.model_copy(
-            update={
-                "sub_questions": (
-                    critique.follow_up_questions
-                ),
-                "search_queries": (
-                    critique.follow_up_questions
-                ),
-            }
+            state=state,
+            events=self.event_logger.all(),
         )

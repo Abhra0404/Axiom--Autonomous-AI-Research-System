@@ -8,6 +8,7 @@ from app.models.schemas import (
     ResearchPlan,
     Source,
 )
+from app.core.event_logger import ResearchEventLogger
 
 
 def test_research_loop_stops_when_sufficient():
@@ -96,6 +97,8 @@ def test_research_loop_stops_when_sufficient():
         source
     ]
 
+    event_logger = ResearchEventLogger()
+
     # ---------------------------------------------------------
     # Research loop
     # ---------------------------------------------------------
@@ -107,6 +110,7 @@ def test_research_loop_stops_when_sufficient():
         evidence_agent=evidence_agent,
         claim_analyzer=claim_analyzer,
         critic=critic,
+        event_logger=event_logger,
     )
 
     # ---------------------------------------------------------
@@ -133,6 +137,16 @@ def test_research_loop_stops_when_sufficient():
 
     result = loop.run(plan)
 
+    event_names = [
+        event.event
+        for event in result.events
+    ]
+
+    assert "research_started" in event_names
+    assert "iteration_started" in event_names
+    assert "iteration_completed" in event_names
+    assert "research_completed" in event_names
+
     # ---------------------------------------------------------
     # Assertions
     # ---------------------------------------------------------
@@ -155,7 +169,23 @@ def test_research_loop_stops_when_sufficient():
         result.critique.overall_confidence
         == 0.90
     )
-
+    assert result.state is not None
+    assert result.state.status == "completed"
+    assert result.state.iteration == 1
+    assert result.state.sources_found == 1
+    assert result.state.claims_found == 1
+    assert result.state.relationships_found == 0
+    assert result.state.confidence == 0.90
+    assert result.events is not None
+    assert len(result.events) >= 3
+    assert (
+        result.events
+        == event_logger.all()
+    )
+    assert (
+        len(event_logger.events)
+        == len(result.events)
+    )
     researcher.search.assert_called_once()
 
     evidence_agent.analyze.assert_called_once_with(
