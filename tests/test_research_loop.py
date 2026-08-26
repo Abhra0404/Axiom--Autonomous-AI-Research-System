@@ -4,7 +4,6 @@ from app.core.research_loop import ResearchLoop
 from app.models.schemas import (
     Claim,
     Critique,
-    Evidence,
     EvidenceAnalysis,
     ResearchPlan,
     Source,
@@ -13,89 +12,158 @@ from app.models.schemas import (
 
 def test_research_loop_stops_when_sufficient():
 
-    planner = MagicMock()
-    researcher = MagicMock()
-    evidence_agent = MagicMock()
-    critic = MagicMock()
-    ranker = MagicMock()
+    # ---------------------------------------------------------
+    # Mock researcher
+    # ---------------------------------------------------------
 
-    plan = ResearchPlan(
-        question="Does RAG reduce hallucinations?",
-        objectives=[
-            "Evaluate RAG effectiveness."
-        ],
-        sub_questions=[
-            "What does the evidence show?"
-        ],
-        search_queries=[
-            "RAG hallucination research"
-        ],
-    )
+    researcher = MagicMock()
 
     source = Source(
         id="source-1",
         title="RAG Study",
-        url="https://example.com",
+        url="https://example.com/research",
         source_type="paper",
-        content="RAG reduces hallucinations.",
-    )
-
-    analysis = EvidenceAnalysis(
-        claims=[
-            Claim(
-                id="claim-1",
-                statement="RAG reduces hallucinations.",
-                source_id="source-1",
-                confidence=0.9,
-            )
-        ],
-        evidence=[
-            Evidence(
-                id="evidence-1",
-                claim_id="claim-1",
-                source_id="source-1",
-                content="Study evidence.",
-                strength="strong",
-            )
-        ],
+        content="RAG research content.",
     )
 
     researcher.search.return_value = [
         source
     ]
 
-    ranker.rank.return_value = [
-        source
-    ]
+    # ---------------------------------------------------------
+    # Mock evidence agent
+    # ---------------------------------------------------------
 
-    ranker.select.return_value = [
-        source
-    ]
+    evidence_agent = MagicMock()
 
-    evidence_agent.analyze.return_value = (
-        analysis
+    claim = Claim(
+        id="claim-1",
+        statement="RAG can reduce hallucinations.",
+        source_id="source-1",
+        confidence=0.9,
+        evidence_ids=[],
     )
+
+    analysis = EvidenceAnalysis(
+        claims=[claim],
+        evidence=[],
+    )
+
+    evidence_agent.analyze.return_value = analysis
+
+    # ---------------------------------------------------------
+    # Mock claim analyzer
+    # ---------------------------------------------------------
+
+    claim_analyzer = MagicMock()
+
+    claim_analyzer.analyze.return_value = []
+
+    # ---------------------------------------------------------
+    # Mock critic
+    # ---------------------------------------------------------
+
+    critic = MagicMock()
 
     critic.critique.return_value = Critique(
         sufficient=True,
-        overall_confidence=0.9,
-        strengths=["Strong evidence."],
+        overall_confidence=0.90,
+        strengths=[
+            "Evidence directly addresses the research question."
+        ],
         weaknesses=[],
         missing_information=[],
         follow_up_questions=[],
     )
 
+    # ---------------------------------------------------------
+    # Mock planner
+    # ---------------------------------------------------------
+
+    planner = MagicMock()
+
+    # ---------------------------------------------------------
+    # Mock source ranker
+    # ---------------------------------------------------------
+
+    source_ranker = MagicMock()
+
+    source_ranker.rank.return_value = [
+        source
+    ]
+
+    source_ranker.select.return_value = [
+        source
+    ]
+
+    # ---------------------------------------------------------
+    # Research loop
+    # ---------------------------------------------------------
+
     loop = ResearchLoop(
         planner=planner,
         researcher=researcher,
+        source_ranker=source_ranker,
         evidence_agent=evidence_agent,
+        claim_analyzer=claim_analyzer,
         critic=critic,
-        source_ranker=ranker,
-        max_iterations=3,
     )
+
+    # ---------------------------------------------------------
+    # Research plan
+    # ---------------------------------------------------------
+
+    plan = ResearchPlan(
+        question="Does RAG reduce hallucinations in LLMs?",
+        objectives=[
+            "Determine whether RAG reduces hallucinations."
+        ],
+        sub_questions=[
+            "How does RAG affect hallucination rates?",
+            "What evidence supports or contradicts this?",
+        ],
+        search_queries=[
+            "RAG hallucinations LLM research"
+        ],
+    )
+
+    # ---------------------------------------------------------
+    # Run
+    # ---------------------------------------------------------
 
     result = loop.run(plan)
 
+    # ---------------------------------------------------------
+    # Assertions
+    # ---------------------------------------------------------
+
+    assert result is not None
+
     assert result.iterations == 1
-    assert result.critique.sufficient is True
+
     assert len(result.sources) == 1
+
+    assert len(result.analyses) == 1
+
+    assert len(result.relationships) == 0
+
+    assert result.critique is not None
+
+    assert result.critique.sufficient is True
+
+    assert (
+        result.critique.overall_confidence
+        == 0.90
+    )
+
+    researcher.search.assert_called_once()
+
+    evidence_agent.analyze.assert_called_once_with(
+        source
+    )
+
+    claim_analyzer.analyze.assert_called_once_with(
+        [claim]
+    )
+
+    critic.critique.assert_called_once()

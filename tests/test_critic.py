@@ -2,86 +2,60 @@ from unittest.mock import MagicMock
 
 from app.agents.critic import CriticAgent
 from app.models.schemas import (
-    Critique,
-    Evidence,
-    EvidenceAnalysis,
-    Claim,
+    ClaimRelationship,
     ResearchPlan,
-    Source,
 )
 
 
-def test_critic_returns_critique():
+def test_critic_rejects_strong_contradiction():
 
     llm = MagicMock()
 
     llm.generate_json.return_value = {
-        "sufficient": False,
-        "overall_confidence": 0.65,
+        "sufficient": True,
+        "overall_confidence": 0.95,
         "strengths": [
-            "Multiple sources support the main claim."
+            "Multiple sources were found."
         ],
-        "weaknesses": [
-            "Evidence is limited."
-        ],
-        "missing_information": [
-            "Large-scale studies."
-        ],
-        "follow_up_questions": [
-            "Are there larger studies?"
-        ],
+        "weaknesses": [],
+        "missing_information": [],
+        "follow_up_questions": [],
     }
 
-    agent = CriticAgent(llm)
+    critic = CriticAgent(llm)
+
+    relationships = [
+        ClaimRelationship(
+            claim_a="claim-1",
+            claim_b="claim-2",
+            relationship="contradicts",
+            confidence=0.92,
+        )
+    ]
 
     plan = ResearchPlan(
-        question="Does RAG reduce hallucinations?",
+        question="Does RAG reduce hallucinations in LLMs?",
         objectives=[
-            "Evaluate whether RAG reduces hallucinations."
+            "Determine whether RAG reduces hallucinations."
         ],
         sub_questions=[
-            "What does the evidence show?"
+            "How does RAG affect hallucination rates?",
         ],
         search_queries=[
-            "RAG hallucinations research"
+            "RAG hallucinations LLM research",
         ],
     )
 
-    source = Source(
-        id="source-1",
-        title="RAG Study",
-        url="https://example.com",
-        source_type="paper",
-        content="RAG was evaluated.",
-    )
-
-    analysis = EvidenceAnalysis(
-        claims=[
-            Claim(
-                id="claim-1",
-                statement="RAG reduced hallucinations.",
-                source_id="source-1",
-                confidence=0.8,
-            )
-        ],
-        evidence=[
-            Evidence(
-                id="evidence-1",
-                claim_id="claim-1",
-                source_id="source-1",
-                content="The study reported fewer hallucinations.",
-                strength="moderate",
-            )
-        ],
-    )
-
-    result = agent.critique(
-        plan,
-        [source],
-        [analysis],
+    result = critic.critique(
+        plan=plan,
+        sources=[],
+        analyses=[],
+        relationships=relationships,
     )
 
     assert result.sufficient is False
-    assert result.overall_confidence == 0.65
-    assert len(result.weaknesses) > 0
-    assert len(result.follow_up_questions) > 0
+
+    assert (
+        "Conflicting evidence requires further research."
+        in result.weaknesses
+    )

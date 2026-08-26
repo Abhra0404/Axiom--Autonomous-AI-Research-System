@@ -59,7 +59,20 @@ class Claim(BaseModel):
         default_factory=list,
     )
 
-
+class ClaimRelationship(BaseModel):
+    claim_a: str
+    claim_b: str
+    relationship: Literal[
+        "duplicate",
+        "supports",
+        "contradicts",
+        "independent",
+    ]
+    confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+    )
+    
 class Evidence(BaseModel):
     id: str
     claim_id: str

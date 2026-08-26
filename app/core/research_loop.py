@@ -1,15 +1,18 @@
 from dataclasses import dataclass
+from pydantic import Field
 
 from app.agents.critic import CriticAgent
 from app.agents.evidence import EvidenceAgent
 from app.agents.planner import Planner
 from app.agents.researcher import Researcher
 from app.core.source_ranker import SourceRanker
+from app.core.claim_analyzer import ClaimAnalyzer
 from app.models.schemas import (
     Critique,
     EvidenceAnalysis,
     ResearchPlan,
     Source,
+    ClaimRelationship
 )
 
 
@@ -20,6 +23,9 @@ class ResearchResult:
     analyses: list[EvidenceAnalysis]
     critique: Critique
     iterations: int
+    relationships: list[ClaimRelationship] = Field(
+        default_factory=list,
+    )
 
 
 class ResearchLoop:
@@ -31,6 +37,7 @@ class ResearchLoop:
         evidence_agent: EvidenceAgent,
         critic: CriticAgent,
         source_ranker: SourceRanker,
+        claim_analyzer: ClaimAnalyzer,
         max_iterations: int = 3,
     ):
         self.planner = planner
@@ -39,6 +46,7 @@ class ResearchLoop:
         self.critic = critic
         self.source_ranker = source_ranker
         self.max_iterations = max_iterations
+        self.claim_analyzer = claim_analyzer
 
     def run(
         self,
@@ -124,14 +132,22 @@ class ResearchLoop:
 
                 try:
 
-                    analysis = (
-                        self.evidence_agent.analyze(
-                            source
-                        )
+                    analyses = [
+                        self.evidence_agent.analyze(source)
+                    ]
+
+                    claims = [
+                        claim
+                        for analysis in analyses
+                        for claim in analysis.claims
+                    ]
+
+                    relationships = self.claim_analyzer.analyze(
+                        claims
                     )
 
                     all_analyses.append(
-                        analysis
+                        analyses
                     )
 
                     print(
@@ -158,6 +174,7 @@ class ResearchLoop:
                 current_plan,
                 all_sources,
                 all_analyses,
+                relationships,
             )
 
             print(
@@ -207,8 +224,9 @@ class ResearchLoop:
 
         return ResearchResult(
             plan=plan,
-            sources=all_sources,
-            analyses=all_analyses,
+            sources=sources,
+            analyses=analyses,
+            relationships=relationships,
             critique=critique,
             iterations=iteration,
         )

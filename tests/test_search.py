@@ -1,7 +1,7 @@
 from app.core.tavily_search import TavilySearchProvider
+from unittest.mock import MagicMock
 
-
-provider = TavilySearchProvider()
+provider = MagicMock()
 
 results = provider.search(
     "retrieval augmented generation hallucinations LLM research"

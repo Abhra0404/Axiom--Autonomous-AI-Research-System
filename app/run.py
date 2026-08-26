@@ -19,6 +19,7 @@ from app.core.report_renderer import ReportRenderer
 from app.core.report_store import ReportStore
 from app.core.source_cache import SourceCache
 from app.core.evidence_cache import EvidenceCache
+from app.core.claim_analyzer import ClaimAnalyzer
 
 
 
@@ -108,9 +109,12 @@ def run_research(topic: str) -> None:
         evidence_agent=evidence_agent,
         critic=critic,
         source_ranker=source_ranker,
+        claim_analyzer=claim_analyzer,
         max_iterations=3,
     )
-
+    claim_analyzer = ClaimAnalyzer(
+        llm
+    )
     # =========================================================
     # 4. Execute Autonomous Research
     # =========================================================
