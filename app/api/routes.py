@@ -11,6 +11,8 @@ from app.api.schemas import (
 )
 from app.core.research_run_store import ResearchRunStore
 
+from fastapi import HTTPException
+from app.core.report_store import ReportStore
 
 router = APIRouter()
 
@@ -170,3 +172,26 @@ def get_research_status(
         status_code=404,
         detail="Research run not found",
     )
+
+@router.get("/research/{run_id}/report")
+def get_research_report(run_id: str):
+
+    report_store = ReportStore()
+
+    report_file = (
+        report_store.base_dir
+        / f"{run_id}.md"
+    )
+
+    if not report_file.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="Research report not found.",
+        )
+
+    return {
+        "run_id": run_id,
+        "report": report_file.read_text(
+            encoding="utf-8"
+        ),
+    }

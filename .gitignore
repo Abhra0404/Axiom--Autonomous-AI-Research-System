@@ -93,3 +93,5 @@ logs/
 
 research/*
 !research/.gitkeep
+
+node_modules

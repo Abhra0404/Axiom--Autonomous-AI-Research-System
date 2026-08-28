@@ -183,12 +183,12 @@ class ResearchLoop:
 
             if all_sources:
 
-                ranked_sources = (
-                    self.source_ranker.rank(
-                        all_sources,
-                        current_plan.question,
-                    )
+                ranked_sources = self.source_ranker.rank(
+                    all_sources,
+                    current_plan.question,
                 )
+
+                all_sources = ranked_sources
 
                 selected_sources = (
                     self.source_ranker.select(
