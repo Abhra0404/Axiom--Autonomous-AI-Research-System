@@ -29,73 +29,6 @@ Axiom automatically:
 
 ---
 
-## Architecture
-
-```text
-                         Research Question
-                                │
-                                ▼
-                           ┌─────────┐
-                           │ Planner │
-                           └────┬────┘
-                                │
-                         Search Queries
-                                │
-                                ▼
-                         ┌────────────┐
-                         │ Researcher │
-                         └─────┬──────┘
-                               │
-                         Search + Ingest
-                               │
-                               ▼
-                     ┌──────────────────┐
-                     │ Source Management│
-                     └────────┬─────────┘
-                              │
-                       Clean + Deduplicate
-                              │
-                              ▼
-                       ┌─────────────┐
-                       │Source Ranker│
-                       └──────┬──────┘
-                              │
-                    Relevance + Quality
-                              │
-                              ▼
-                      ┌───────────────┐
-                      │Evidence Agent│
-                      └───────┬───────┘
-                              │
-                    ┌─────────┴─────────┐
-                    ▼                   ▼
-                 Claims              Evidence
-                    │                   │
-                    ▼                   │
-              Claim Analyzer            │
-                    │                   │
-                    └─────────┬─────────┘
-                              ▼
-                        Critic Agent
-                              │
-                              ▼
-                       Research Loop
-                              │
-                              ▼
-                        Report Agent
-                              │
-                              ▼
-                      Markdown Report
-                              │
-                              ▼
-                         FastAPI API
-                              │
-                              ▼
-                       React Dashboard
-```
-
----
-
 ## Autonomous Research Flow
 
 Axiom performs iterative research instead of relying on a single search-and-answer cycle.
@@ -300,3 +233,5 @@ npm run dev
 ## License
 
 This project is open source and available under the MIT License.
+
+> Stay focused, stay productive, and keep leveling up! — kaizenX out. ✌️
