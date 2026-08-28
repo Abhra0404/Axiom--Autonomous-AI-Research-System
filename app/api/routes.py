@@ -32,7 +32,8 @@ def execute_research(
     try:
 
         result = run_research(
-            topic
+            topic,
+            run_id=run_id,
         )
 
         # The research loop creates its own
