@@ -1,251 +1,302 @@
-# Axiom
+# Axiom — Autonomous AI Research System
 
-### Autonomous AI Research System
+Axiom is an **autonomous AI research system** that takes a research question, plans an investigation, gathers and evaluates sources, extracts evidence and claims, analyzes relationships between claims, critiques the research, and generates a structured research report.
 
-> **Give Axiom a research question. It investigates the topic, gathers evidence, critiques its findings, and produces a structured research report.**
-
-Axiom is an agentic AI research system designed to autonomously investigate technical and scientific questions.
-
-Instead of simply answering a question from an LLM, Axiom follows a research workflow: it decomposes the problem, searches relevant sources, extracts evidence, evaluates conflicting claims, identifies knowledge gaps, and iterates when more research is required.
+Instead of producing a single LLM response, Axiom uses a **multi-stage research pipeline** designed to improve evidence grounding, source evaluation, and research reliability.
 
 ---
 
-## How It Works
+## What Axiom Does
 
-```text
-                    Research Question
-                           │
-                           ▼
-                      ┌─────────┐
-                      │ Planner │
-                      └────┬────┘
-                           │
-              ┌────────────┼────────────┐
-              ▼            ▼            ▼
-         ┌─────────┐  ┌─────────┐  ┌───────────┐
-         │Research │  │Evidence │  │Experiment │
-         │ Agent   │  │  Agent  │  │   Agent   │
-         └────┬────┘  └────┬────┘  └─────┬─────┘
-              │            │              │
-              └────────────┼──────────────┘
-                           ▼
-                      ┌─────────┐
-                      │ Critic  │
-                      └────┬────┘
-                           │
-                    More evidence?
-                      /         \
-                    Yes          No
-                     │            │
-                     ▼            ▼
-                 Research     Synthesis
-                   Again          │
-                                  ▼
-                            Final Report
-```
+Given a research question such as:
 
-The **Experiment Agent is optional**. Axiom can perform pure literature research when experiments are unnecessary, or combine existing research with new experiments when empirical evidence is useful.
+> **Does RAG reduce hallucinations in LLMs?**
 
----
+Axiom automatically:
 
-## Core Capabilities
-
-### Research Planning
-
-* Understand the research objective
-* Break complex questions into sub-questions
-* Generate a research strategy
-* Define evidence requirements and stopping criteria
-
-### Autonomous Research
-
-* Search academic papers and technical sources
-* Collect relevant evidence
-* Track sources and citations
-* Compare different approaches and findings
-
-### Evidence Analysis
-
-* Extract claims from sources
-* Link claims to supporting evidence
-* Identify contradictory results
-* Evaluate source and methodology quality
-* Track uncertainty and confidence
-
-### Self-Critique
-
-Axiom evaluates its own research:
-
-```text
-Research
-   ↓
-Evidence
-   ↓
-Critique
-   ↓
-Knowledge Gap
-   ↓
-New Research
-   ↓
-Evidence
-   ↓
-...
-```
-
-This allows the system to continue investigating when the available evidence is insufficient.
-
-### Experimental Research
-
-When appropriate, Axiom can extend literature research into empirical experimentation:
-
-* Find or use relevant datasets
-* Design experiments
-* Generate Python code
-* Execute experiments in isolated environments
-* Evaluate results
-* Compare models and methodologies
-* Feed experimental findings back into the research loop
-
----
-
-## Example
-
-### Research Question
-
-> **Does Retrieval-Augmented Generation actually reduce hallucinations in LLMs?**
-
-Axiom may investigate:
-
-```text
-1. Define hallucination
-2. Identify evaluation methods
-3. Find relevant research
-4. Extract experimental results
-5. Compare methodologies
-6. Identify contradictory findings
-7. Evaluate evidence quality
-8. Identify research gaps
-9. Perform additional research
-10. Synthesize the findings
-```
-
-The final output contains:
-
-```text
-Research Question
-Background
-Methodology
-Key Evidence
-Comparative Analysis
-Contradictory Findings
-Limitations
-Conclusion
-Confidence
-References
-```
+1. Creates a structured research plan.
+2. Generates targeted search queries.
+3. Searches and ingests relevant sources.
+4. Cleans and deduplicates sources.
+5. Ranks sources using relevance and quality scores.
+6. Extracts claims and supporting evidence.
+7. Analyzes relationships between claims.
+8. Detects contradictions and duplicate claims.
+9. Uses a critic agent to identify weaknesses and knowledge gaps.
+10. Performs follow-up research when evidence is insufficient.
+11. Generates a citation-aware research report.
+12. Stores the complete research run for inspection.
 
 ---
 
 ## Architecture
 
-Axiom is designed as a modular multi-agent system.
-
 ```text
-axiom/
-├── agents/
-│   ├── planner/
-│   ├── researcher/
-│   ├── evidence/
-│   ├── experiment/
-│   ├── critic/
-│   └── synthesis/
-│
-├── api/
-├── execution/
-├── evaluation/
-├── storage/
-├── models/
-│
-├── experiments/
-├── research/
-├── reports/
-├── tests/
-│
-├── frontend/
-├── docker/
-│
-├── pyproject.toml
-└── README.md
+                         Research Question
+                                │
+                                ▼
+                           ┌─────────┐
+                           │ Planner │
+                           └────┬────┘
+                                │
+                         Search Queries
+                                │
+                                ▼
+                         ┌────────────┐
+                         │ Researcher │
+                         └─────┬──────┘
+                               │
+                         Search + Ingest
+                               │
+                               ▼
+                     ┌──────────────────┐
+                     │ Source Management│
+                     └────────┬─────────┘
+                              │
+                       Clean + Deduplicate
+                              │
+                              ▼
+                       ┌─────────────┐
+                       │Source Ranker│
+                       └──────┬──────┘
+                              │
+                    Relevance + Quality
+                              │
+                              ▼
+                      ┌───────────────┐
+                      │Evidence Agent│
+                      └───────┬───────┘
+                              │
+                    ┌─────────┴─────────┐
+                    ▼                   ▼
+                 Claims              Evidence
+                    │                   │
+                    ▼                   │
+              Claim Analyzer            │
+                    │                   │
+                    └─────────┬─────────┘
+                              ▼
+                        Critic Agent
+                              │
+                              ▼
+                       Research Loop
+                              │
+                              ▼
+                        Report Agent
+                              │
+                              ▼
+                      Markdown Report
+                              │
+                              ▼
+                         FastAPI API
+                              │
+                              ▼
+                       React Dashboard
 ```
 
-Agents communicate through structured schemas rather than unstructured text wherever possible.
+---
+
+## Autonomous Research Flow
+
+Axiom performs iterative research instead of relying on a single search-and-answer cycle.
+
+```mermaid
+flowchart TD
+    A[Research Question] --> B[Planner]
+    B --> C[Research Queries]
+    C --> D[Source Search]
+    D --> E[Source Ingestion]
+    E --> F[Clean & Deduplicate]
+    F --> G[Source Ranking]
+    G --> H[Evidence Extraction]
+    H --> I[Claim Extraction]
+    I --> J[Claim Relationship Analysis]
+    J --> K[Critic Agent]
+    K --> L{Research Sufficient?}
+    L -->|No| M[Identify Knowledge Gaps]
+    M --> C
+    L -->|Yes| N[Generate Report]
+    N --> O[Store Research Run]
+```
+
+---
+
+## Evidence & Claim Pipeline
+
+Claims are separated from their supporting evidence and analyzed for relationships.
+
+```mermaid
+flowchart LR
+    A[Sources] --> B[Evidence Agent]
+
+    B --> C[Evidence]
+    B --> D[Claims]
+
+    D --> E[Claim Analyzer]
+
+    E --> F[Duplicate]
+    E --> G[Supports]
+    E --> H[Contradicts]
+    E --> I[Independent]
+
+    C --> J[Critic Agent]
+    F --> J
+    G --> J
+    H --> J
+    I --> J
+
+    J --> K[Research Report]
+```
+
+---
+
+## Source Ranking
+
+Axiom evaluates sources using two signals:
+
+* **Relevance** — how closely the source matches the research question.
+* **Quality** — how authoritative or reliable the source is.
+
+```text
+Final Score
+    =
+    0.70 × Relevance
+    +
+    0.30 × Quality
+```
+
+Example quality signals:
+
+| Source Type               | Quality |
+| ------------------------- | ------: |
+| Academic / research paper |    1.00 |
+| Nature / Science          |    1.00 |
+| ACM / IEEE                |    0.95 |
+| Government sources        |    0.90 |
+| Documentation             |    0.90 |
+| GitHub                    |    0.80 |
+| General article           |    0.45 |
+| Unknown source            |    0.30 |
+
+---
+
+## Core Components
+
+| Component           | Responsibility                                        |
+| ------------------- | ----------------------------------------------------- |
+| **Planner**         | Creates objectives, sub-questions, and search queries |
+| **Researcher**      | Searches for and collects relevant sources            |
+| **Source Ingestor** | Retrieves and processes source content                |
+| **Source Manager**  | Cleans and deduplicates sources                       |
+| **Source Ranker**   | Calculates relevance and quality scores               |
+| **Evidence Agent**  | Extracts evidence and claims                          |
+| **Claim Analyzer**  | Detects relationships between claims                  |
+| **Critic Agent**    | Evaluates research sufficiency and knowledge gaps     |
+| **Research Loop**   | Coordinates iterative research                        |
+| **Report Agent**    | Synthesizes findings into a final report              |
+| **FastAPI API**     | Exposes the research system                           |
+| **React Dashboard** | Provides the research interface                       |
+
+---
+
+## Key Features
+
+* Autonomous multi-step research
+* Iterative research with stopping criteria
+* Structured claims and evidence
+* Source quality and relevance scoring
+* Claim contradiction and duplicate detection
+* Evidence caching
+* Source caching
+* Citation-aware Markdown reports
+* Persistent research runs
+* REST API
+* Interactive research dashboard
+* Automated test suite
 
 ---
 
 ## Tech Stack
 
-| Layer               | Technology                        |
-| ------------------- | --------------------------------- |
-| Language            | Python                            |
-| API                 | FastAPI                           |
-| Agent Orchestration | LangGraph                         |
-| LLM                 | OpenAI API                        |
-| Validation          | Pydantic                          |
-| Database            | PostgreSQL                        |
-| Experiment Tracking | MLflow                            |
-| ML                  | PyTorch, scikit-learn, XGBoost    |
-| Execution           | Docker                            |
-| Frontend            | Next.js, TypeScript, Tailwind CSS |
+**Backend**
 
-The stack will evolve as the system moves from research prototype to production infrastructure.
+* Python
+* FastAPI
+* Pydantic
+* Google Gemini API
+* Tavily Search
+* Pytest
+
+**Frontend**
+
+* React
+* Vite
+* Tailwind CSS
+* React Router
+* React Markdown
+* Lucide React
+
+**Architecture**
+
+* Multi-agent system
+* Iterative research loop
+* Structured LLM outputs
+* Background execution
+* REST API
+* File-based persistence
 
 ---
 
-## Research Artifacts
+## Running Locally
 
-Every research run should produce reproducible artifacts:
+### Clone
 
-```text
-research_run/
-├── research_plan.json
-├── sources.json
-├── claims.json
-├── evidence.json
-├── critiques.json
-├── findings.json
-├── experiments/
-└── report.md
+```bash
+git clone https://github.com/Abhra0404/Axiom--Autonomous-AI-Research-System.git
+
+cd Axiom--Autonomous-AI-Research-System
 ```
 
-This makes the research process inspectable rather than treating the final answer as a black box.
+### Backend
+
+```bash
+python -m venv venv
+source venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+Create `.env`:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key
+TAVILY_API_KEY=your_tavily_api_key
+GEMINI_MODEL=gemini-3.5-flash
+```
+
+Run research:
+
+```bash
+python -m app.run "Does RAG reduce hallucinations in LLMs?"
+```
+
+Start the API:
+
+```bash
+uvicorn app.api.main:app --reload
+```
+
+### Frontend
+
+```bash
+cd frontend
+
+npm install
+npm run dev
+```
 
 ---
 
-## Design Principles
+## License
 
-**Evidence over confidence**
-LLM confidence is not evidence. Claims should be grounded in sources or reproducible experiments.
-
-**Reproducibility**
-Research plans, sources, experiments, results, and conclusions should be traceable.
-
-**Explicit uncertainty**
-Axiom should distinguish between established evidence, supported claims, uncertain findings, contradictions, and speculation.
-
-**Controlled autonomy**
-Agents operate within defined tool permissions, execution limits, budgets, and stopping conditions.
-
-**Modularity**
-Each agent has a focused responsibility and communicates through structured interfaces.
-
----
-
-## Vision
-
-Most AI systems are built to **answer questions**.
-
-Axiom is built to **investigate them**.
-
-> **Research. Experiment. Critique. Discover.**
-
-**Status:** 🚧 Active Development
+This project is open source and available under the MIT License.
